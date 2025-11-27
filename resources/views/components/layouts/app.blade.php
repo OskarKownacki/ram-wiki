@@ -14,15 +14,14 @@
     <header class="mx-[15%]">
         <nav class="grid grid-cols-12 gap-16 p-4">
             <a href="/" class="col-span-3 text-2xl text-center flex items-center">Ram wiki Esus IT</a>
-            <a href="/" class="col-start-5 col-span-2 text-center text-xl flex items-center">Edit RAMs</a>
-            <a href="/" class="col-start-7 col-span-2 text-center text-xl flex items-center">Edit server racks</a>
+            <a href="edit" class="col-span-2 col-start-6 text-center bg-green-600 text-white rounded-md p-2 m-1">Edit</a>
             <div class="col-start-10 col-span-3 grid grid-cols-2">
                 <a class="bg-blue-700 text-white text-center rounded-md p-2 m-1" href="/login">Login</a>
                 <a class="bg-gray-500 text-white text-center rounded-md p-2 m-1" href="/register">Register</a>
             </div>
         </nav>
     </header>
-    <main class="flex-grow">
+    <main class="grow">
         {{ $slot }}
     </main>
     @fluxScripts
