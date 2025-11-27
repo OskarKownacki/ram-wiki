@@ -1,7 +1,7 @@
 <div class="mx-[15%] mt-8 grid grid-cols-12 gap-16 p-4">
     <button class="col-span-2 col-start-1 bg-emerald-600 rounded-md p-2 flex items-center justify-between">CSV Import
-        @svg('heroicon-o-table-cells', 'w-6 h-6', ['style' => 'color: #ffff'])</button>
-    <div class="col-span-12  min-h-[60vh] bg-zinc-600 rounded-xl">
+        @svg('heroicon-o-table-cells', ['class' => 'w-6 h-6', 'style' => 'color: #fff'])</button>
+    <div class="col-span-12  min-h-[60vh] bg-zinc-600 rounded-xl bg-editor">
         <div class="grid grid-cols-6  mt-2 p-4">
             <button @class([
                 'text-3xl',
@@ -33,28 +33,24 @@
                         <label class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*']"
                             for="ProductCode">Producer code</label>
                         <input type="text" name="ProductCode"
-                            class="border-2 rounded-md border-emerald-500 placeholder:text-gray-300 p-2 focus:outline-none "
-                            placeholder="Product Code" />
+                            class="border-2 rounded-md border-emerald-500 p-2 focus:outline-none " />
                     </div>
                     <div class="col-span-3 row-start-1 col-start-4 flex flex-col">
                         <label class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*']"
                             for="TraitId">Trait ID</label>
                         <input type="number" name="TraitId"
-                            class="border-2 rounded-md border-emerald-500 placeholder:text-gray-300 p-2 focus:outline-none"
-                            placeholder="Trait id" />
+                            class="border-2 rounded-md border-emerald-500 p-2 focus:outline-none"/>
                     </div>
                     <div class="col-span-6 row-start-2 flex flex-col">
                         <label class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*']"
                             for="Description">Description</label>
                         <input type="text" name="Description"
-                            class="border-2 rounded-md border-emerald-500 placeholder:text-gray-300 p-2 focus:outline-none"
-                            placeholder="Description" />
+                            class="border-2 rounded-md border-emerald-500 p-2 focus:outline-none" />
                     </div>
                     <div class="col-span-6 row-start-3 row-span-3 flex flex-col">
-                        <label class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*']"
-                            for="Manufacturer">Manufacturer</label>
-                        <textarea name="Manufacturer"
-                            class="border-2 rounded-md border-emerald-500 placeholder:text-gray-300 p-2 focus:outline-none"
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*']">Manufacturer</label>
+                        <textarea name="Manufacturer" class="border-2 rounded-md border-emerald-500 p-2 focus:outline-none"
                             placeholder="Manufacturer" form="ram-form"> </textarea>
                     </div>
                 </form>
