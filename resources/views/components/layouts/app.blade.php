@@ -8,6 +8,7 @@
     <title>{{ $title ?? 'Ram wiki' }}</title>
     @fluxAppearance
     @vite('resources/css/app.css')
+    @livewireStyles
 </head>
 
 <body class="bg-zinc-800 min-h-screen flex flex-col">
@@ -28,7 +29,7 @@
     <footer class="bg-zinc-700 w-full  h-[10vh] flex items-center justify-center text-white">
         &copy; {{ date('Y') }} Ram wiki Esus IT. All rights reserved.
     </footer>
-
+@livewireScripts
 </body>
 
 </html>
