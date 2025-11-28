@@ -7,6 +7,10 @@
     --font-sans: "Roboto Condensed", ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
+    --color-primary: var(--color-sky-950); 
+    --color-secondary: var(--color-sky-600);
+    --color-accent: var(--color-sky-400);
+    --color-footer: var(--color-sky-900);
 }
 
 input[type="number"]::-webkit-inner-spin-button,
