@@ -31,6 +31,7 @@ class HardwareTrait extends Model
     {
         return $this->hasMany(Ram::class, 'hardware_trait_id', 'id');
     }
+
     public function servers()
     {
         return $this->belongsToMany(Server::class, 'hardware_trait_server', 'hardware_trait_id', 'server_id');

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\ProcessCsvImport;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
 class CsvImportService
@@ -10,7 +11,7 @@ class CsvImportService
     {
         $rows = SimpleExcelReader::create($filePath)->getRows();
         foreach ($rows as $row) {
-            // Process each row as needed
+            ProcessCsvImport::dispatch($row)->onQueue('csv_imports');
         }
     }
 }
