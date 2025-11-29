@@ -9,6 +9,8 @@ class CsvImportService
     public function importFile($filePath)
     {
         $rows = SimpleExcelReader::create($filePath)->getRows();
-
+        foreach ($rows as $row) {
+            // Process each row as needed
+        }
     }
 }
