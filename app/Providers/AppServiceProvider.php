@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
+use App\Interfaces\CsvImportInterface;
 use App\Services\CsvImportService;
-use CsvImportInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

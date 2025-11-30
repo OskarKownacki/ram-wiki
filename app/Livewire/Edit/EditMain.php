@@ -2,8 +2,7 @@
 
 namespace App\Livewire\Edit;
 
-use App\Services\CsvImportService;
-use CsvImportInterface;
+use App\Interfaces\CsvImportInterface;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -17,7 +16,7 @@ class EditMain extends Component
 
     public int $selectedTabId = 1;
 
-    private CsvImportService $csvImportInterface;
+    private CsvImportInterface $csvImportInterface;
 
     public function render()
     {

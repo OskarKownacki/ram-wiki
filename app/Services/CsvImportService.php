@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Interfaces\CsvImportInterface;
 use App\Jobs\ProcessCsvImport;
-use CsvImportInterface;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
 class CsvImportService implements CsvImportInterface

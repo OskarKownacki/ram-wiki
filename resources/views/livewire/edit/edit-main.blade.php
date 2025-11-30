@@ -23,10 +23,10 @@
                 'font-bold border-b-2 border-accent' => $selectedTabId === 3,
             ]) wire:click="setTab(3)">Trait</button>
         </div>
-        <hr>
+        <hr class="m-4">
         <div>
             @if ($selectedTabId === 1)
-                <form wire:submit="uploadCsv" class="grid grid-cols-12 gap-4 col-span-12">
+                <form wire:submit="uploadCsv" class="grid grid-cols-12 gap-4 col-span-12 p-4">
                     <label for="csv_file"
                         class="col-span-2 col-start-1 bg-green-700 rounded-md p-2 flex items-center justify-between cursor-pointer">
                         CSV Import
@@ -41,7 +41,7 @@
                             @svg('heroicon-o-arrow-up-on-square', ['class' => 'w-6 h-6', 'style' => 'color: #fff'])</button>
                     @endif
                 </form>
-                <form class="grid grid-cols-12 gap-4 p-4 grid-rows-6" id="ram-form">
+                <form class="grid grid-cols-12 gap-4 p-4 grid-rows-5" id="ram-form">
                     <div class="col-span-3 row-start-1 flex flex-col">
                         <label
                             class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*'] mb-1"
