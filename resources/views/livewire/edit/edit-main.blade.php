@@ -1,18 +1,4 @@
 <div class="mx-[15%] mt-8 grid grid-cols-12 gap-16 gap-y-8 p-4">
-    <form wire:submit="uploadCsv" class="grid grid-cols-12 gap-4 col-span-12">
-<label for="csv_file" class="col-span-2 col-start-1 bg-green-700 rounded-md p-2 flex items-center justify-between cursor-pointer">
-    CSV Import
-    @svg('heroicon-o-table-cells', ['class' => 'w-6 h-6 text-white'])
-</label>
-<input type="file" id="csv_file" name="csv_file" class="hidden"
-       wire:model="csv_file" accept=".csv" />
-
-    @if($csv_file)
-    <button type="submit"
-        class="col-span-2 col-start-3 bg-accent rounded-md p-2 flex items-center justify-between">Import
-        @svg('heroicon-o-arrow-up-on-square', ['class' => 'w-6 h-6', 'style' => 'color: #fff'])</button>
-    @endif
-    </form>
     <div class="col-span-12  min-h-[60vh] bg-zinc-600 rounded-xl bg-editor">
         <div class="grid grid-cols-6  mt-2 p-4">
             <button @class([
@@ -40,6 +26,21 @@
         <hr>
         <div>
             @if ($selectedTabId === 1)
+                <form wire:submit="uploadCsv" class="grid grid-cols-12 gap-4 col-span-12">
+                    <label for="csv_file"
+                        class="col-span-2 col-start-1 bg-green-700 rounded-md p-2 flex items-center justify-between cursor-pointer">
+                        CSV Import
+                        @svg('heroicon-o-table-cells', ['class' => 'w-6 h-6 text-white'])
+                    </label>
+                    <input type="file" id="csv_file" name="csv_file" class="hidden" wire:model="csv_file"
+                        accept=".csv" />
+
+                    @if ($csv_file)
+                        <button type="submit"
+                            class="col-span-2 col-start-3 bg-accent rounded-md p-2 flex items-center justify-between">Import
+                            @svg('heroicon-o-arrow-up-on-square', ['class' => 'w-6 h-6', 'style' => 'color: #fff'])</button>
+                    @endif
+                </form>
                 <form class="grid grid-cols-12 gap-4 p-4 grid-rows-6" id="ram-form">
                     <div class="col-span-3 row-start-1 flex flex-col">
                         <label

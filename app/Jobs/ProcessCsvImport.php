@@ -22,7 +22,6 @@ class ProcessCsvImport implements ShouldQueue
 
     public function handle(): void
     {
-
         $eccSupport = (strtolower($this->row['Obsługa ECC']) === 'tak') ? true : false;
         $eccRegistered = (strtolower($this->row['Rejestrowanie (ECC Registered)']) === 'tak') ? true : false;
         $data = [
@@ -64,18 +63,25 @@ class ProcessCsvImport implements ShouldQueue
             'guarancy'       => 'string',
         ];
 
-        try {
+        try
+        {
             $validator = Validator::make($data, $rules);
             $validator->validate();
-        } catch (ValidationException $e) {
+        }
+        catch (ValidationException $e)
+        {
             Log::error('CSV import vaildation failed for traits on trait:' . $data['name'] . ' with errors: '  . json_encode($validator->errors()->all()));
-            foreach ($validator->errors()->all() as $error) {
-                if (str_contains($error, 'required')) {
+            foreach ($validator->errors()->all() as $error)
+            {
+                if (str_contains($error, 'required'))
+                {
                     throw $e;
                 }
             }
-            foreach ($optionalFields as $field) {
-                if ($validator->errors()->has($field)) {
+            foreach ($optionalFields as $field)
+            {
+                if ($validator->errors()->has($field))
+                {
                     $data[$field] = null;
                     Log::error('The field that didnt pass validation wasnt essential. It will be nulled, make sure to investigate the issue. Trait name: ' . $data["name"]);
                 }

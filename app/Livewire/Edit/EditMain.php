@@ -3,6 +3,7 @@
 namespace App\Livewire\Edit;
 
 use App\Services\CsvImportService;
+use CsvImportInterface;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -16,11 +17,10 @@ class EditMain extends Component
 
     public int $selectedTabId = 1;
 
-    private CsvImportService $csvImportService;
+    private CsvImportService $csvImportInterface;
 
     public function render()
     {
-
         return view('livewire.edit.edit-main');
     }
 
@@ -29,9 +29,9 @@ class EditMain extends Component
         $this->selectedTabId = $tabId;
     }
 
-    public function boot(CsvImportService $csvImportService)
+    public function boot(CsvImportInterface $csvImportInterface)
     {
-        $this->csvImportService = $csvImportService;
+        $this->csvImportInterface = $csvImportInterface;
     }
 
     public function uploadCsv()
@@ -40,6 +40,9 @@ class EditMain extends Component
         $name = $this->csv_file->getClientOriginalName();
         $this->csv_file->storeAs(path: 'imports', name: $name);
         $path = storage_path('app/private/imports/' . $name);
-        $this->csvImportService->importFile($path);
+        if ($this->selectedTabId === 1)
+        {
+            $this->csvImportInterface->importHardwareTraitsFile($path);
+        }
     }
 }
