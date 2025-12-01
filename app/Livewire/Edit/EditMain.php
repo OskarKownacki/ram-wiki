@@ -39,9 +39,79 @@ class EditMain extends Component
         $name = $this->csv_file->getClientOriginalName();
         $this->csv_file->storeAs(path: 'imports', name: $name);
         $path = storage_path('app/private/imports/' . $name);
+        $booleanIndices = ['Obsługa ECC', 'Rejestrowanie (ECC Registered)'];
+
+        $fields = [
+            'name' => [
+                'csv'   => 'Nazwa',
+                'rules' => 'required|string',
+            ],
+            'capacity' => [
+                'csv'   => 'Pojemność całkowita',
+                'rules' => 'required|string',
+            ],
+            'bundle' => [
+                'csv'   => 'Zestaw',
+                'rules' => 'required|string',
+            ],
+            'type' => [
+                'csv'   => 'Typ',
+                'rules' => 'required|string',
+            ],
+            'rank' => [
+                'csv'   => 'Rank',
+                'rules' => 'required|string',
+            ],
+            'memory_type' => [
+                'csv'   => 'Rodzaj pamięci',
+                'rules' => 'required|string',
+            ],
+            'ecc_support' => [
+                'csv'   => 'Obsługa ECC',
+                'rules' => 'required|boolean',
+            ],
+            'ecc_registered' => [
+                'csv'   => 'Rejestrowanie (ECC Registered)',
+                'rules' => 'boolean',
+            ],
+            'speed' => [
+                'csv'   => 'Szybkość modułu',
+                'rules' => 'required|string',
+            ],
+            'frequency' => [
+                'csv'   => 'Częstotliwość',
+                'rules' => 'required|string',
+            ],
+            'cycle_latency' => [
+                'csv'   => 'Opóźnienie (Cycle Latency)',
+                'rules' => 'string',
+            ],
+            'voltage_v' => [
+                'csv'   => 'Napięcie (V)',
+                'rules' => 'numeric|nullable',
+            ],
+            'bus' => [
+                'csv'   => 'Złącze',
+                'rules' => 'string',
+            ],
+            'module_build' => [
+                'csv'   => 'Budowa modułu',
+                'rules' => 'string',
+            ],
+            'module_ammount' => [
+                'csv'   => 'Liczba modułów',
+                'rules' => 'string',
+            ],
+            'guarancy' => [
+                'csv'   => 'Gwarancja',
+                'rules' => 'string',
+            ],
+        ];
+        $optionalFields = ['ecc_registered', 'cycle_latency', 'voltage_v', 'bus', 'module_build', 'module_ammount', 'guarancy'];
+
         if ($this->selectedTabId === 1)
         {
-            $this->csvImportInterface->importHardwareTraitsFile($path);
+            $this->csvImportInterface->importHardwareTraitsFile($path, $fields, $booleanIndices, $optionalFields, 'name');
         }
     }
 }
