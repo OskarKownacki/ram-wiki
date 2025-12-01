@@ -33,7 +33,7 @@ class EditMain extends Component
         $this->csvImportInterface = $csvImportInterface;
     }
 
-    public function uploadCsv()
+    public function uploadTraitsCsv()
     {
         $this->validate();
         $name = $this->csv_file->getClientOriginalName();
