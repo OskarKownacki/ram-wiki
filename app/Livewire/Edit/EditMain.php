@@ -33,18 +33,52 @@ class EditMain extends Component
         $this->csvImportInterface = $csvImportInterface;
     }
 
+ public function uploadRamsCsv()
+ {
+     $this->validate();
+     $name = $this->csv_file->getClientOriginalName();
+     $this->csv_file->storeAs(path: 'imports', name: $name);
+     $path = storage_path('app/private/imports/' . $name);
+     $fields = [
+         'product_code' => [
+             'csv'   => 'Symbol',
+             'rules' => 'required|string',
+             'info'  => 'uniqueIndex',
+         ],
+         'description' => [
+             'csv'   => 'Opis',
+             'rules' => 'required|string',
+         ],
+         'manufacturer' => [
+             'csv'   => 'Producent',
+             'rules' => 'string',
+         ],
+         'hardware_trait_id' => [
+             'csv'   => 'Cecha',
+             'rules' => 'string',
+             'info'  => 'relationship: hardware_traits|id',
+         ],
+     ];
+
+     if ($this->selectedTabId === 1)
+     {
+         $this->csvImportInterface->importCsvFile($path, $fields);
+     }
+ }
+
     public function uploadTraitsCsv()
     {
         $this->validate();
         $name = $this->csv_file->getClientOriginalName();
         $this->csv_file->storeAs(path: 'imports', name: $name);
         $path = storage_path('app/private/imports/' . $name);
-        $booleanIndices = ['Obsługa ECC', 'Rejestrowanie (ECC Registered)'];
+
 
         $fields = [
             'name' => [
                 'csv'   => 'Nazwa',
                 'rules' => 'required|string',
+                'info'  => 'uniqueIndex',
             ],
             'capacity' => [
                 'csv'   => 'Pojemność całkowita',
@@ -107,11 +141,10 @@ class EditMain extends Component
                 'rules' => 'string',
             ],
         ];
-        $optionalFields = ['ecc_registered', 'cycle_latency', 'voltage_v', 'bus', 'module_build', 'module_ammount', 'guarancy'];
 
         if ($this->selectedTabId === 1)
         {
-            $this->csvImportInterface->importHardwareTraitsFile($path, $fields, $booleanIndices, $optionalFields, 'name');
+            $this->csvImportInterface->importCsvFile($path, $fields);
         }
     }
 }
