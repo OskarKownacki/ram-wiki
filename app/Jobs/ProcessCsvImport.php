@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\HardwareTrait;
+use App\Models\Ram;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -21,12 +22,15 @@ class ProcessCsvImport implements ShouldQueue
 
     public string $uniqueIndex;
 
-    public function __construct(array $data, array $rules, array $optionalFields, string $uniqueIndex)
+    public string $modelName;
+
+    public function __construct(array $data, array $rules, array $optionalFields, string $uniqueIndex, string $modelName)
     {
         $this->data = $data;
         $this->rules = $rules;
         $this->optionalFields = $optionalFields;
         $this->uniqueIndex = $uniqueIndex;
+        $this->modelName = $modelName;
     }
 
     public function handle(): void
@@ -38,7 +42,7 @@ class ProcessCsvImport implements ShouldQueue
         }
         catch (ValidationException $e)
         {
-            Log::error('CSV import vaildation failed for traits on trait:' . $this->data['name'] . ' with errors: '  . json_encode($validator->errors()->all()));
+            // Log::error('CSV import vaildation failed for traits on trait:' . $this->data['name'] . ' with errors: '  . json_encode($validator->errors()->all()));
             foreach ($validator->errors()->all() as $error)
             {
                 if (str_contains($error, 'required'))
@@ -51,7 +55,7 @@ class ProcessCsvImport implements ShouldQueue
                 if ($validator->errors()->has($field))
                 {
                     $this->data[$field] = null;
-                    Log::error('The field that didnt pass validation wasnt essential. It will be nulled, make sure to investigate the issue. Trait name: ' . $this->data["name"]);
+                    // Log::error('The field that didnt pass validation wasnt essential. It will be nulled, make sure to investigate the issue. Trait name: ' . $this->data["name"]);
                 }
             }
             $validator = Validator::make($this->data, $this->rules);
@@ -60,6 +64,13 @@ class ProcessCsvImport implements ShouldQueue
 
         $validatedData = $validator->validated();
         $fieldsToUpdate = array_keys($validatedData);
-        HardwareTrait::upsert([$validatedData], uniqueBy: [$this->uniqueIndex], update: $fieldsToUpdate);
+        switch($this->modelName)
+        {
+            case 'hardwareTrait':
+                HardwareTrait::upsert([$validatedData], uniqueBy: [$this->uniqueIndex], update: $fieldsToUpdate);
+                break;
+            case 'Ram':
+                Ram::upsert([$validatedData], uniqueBy: [$this->uniqueIndex], update: $fieldsToUpdate);
+        }
     }
 }

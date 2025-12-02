@@ -55,14 +55,18 @@ class EditMain extends Component
          ],
          'hardware_trait_id' => [
              'csv'   => 'Cecha',
+             'rules' => 'nullable',
+             'info'  => 'relationship:hardware_traits|foreignKey:name',
+         ],
+         'group' => [
+             'csv'   => 'Grupa',
              'rules' => 'string',
-             'info'  => 'relationship: hardware_traits|id',
          ],
      ];
 
      if ($this->selectedTabId === 1)
      {
-         $this->csvImportInterface->importCsvFile($path, $fields);
+         $this->csvImportInterface->importCsvFile($path, $fields, 'Ram');
      }
  }
 
@@ -142,9 +146,9 @@ class EditMain extends Component
             ],
         ];
 
-        if ($this->selectedTabId === 1)
+        if ($this->selectedTabId === 3)
         {
-            $this->csvImportInterface->importCsvFile($path, $fields);
+            $this->csvImportInterface->importCsvFile($path, $fields, 'hardwareTrait');
         }
     }
 }

@@ -4,17 +4,18 @@ namespace App\Services;
 
 use App\Interfaces\CsvImportInterface;
 use App\Jobs\ProcessCsvImport;
+use Illuminate\Support\Facades\DB;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
 class CsvImportService implements CsvImportInterface
 {
-    public function importCsvFile(string $filePath, array $fields): void
+    public function importCsvFile(string $filePath, array $fields, string $modelName): void
     {
         $rows = SimpleExcelReader::create($filePath)->getRows();
         foreach ($rows as $row)
         {
             $mappedData = $this->map($row, $fields);
-            ProcessCsvImport::dispatch($mappedData['data'], $mappedData['rules'], $mappedData["optionalFields"], $mappedData['uniqueIndex'])->onQueue('csv_imports');
+            ProcessCsvImport::dispatch($mappedData['data'], $mappedData['rules'], $mappedData["optionalFields"], $mappedData['uniqueIndex'], $modelName)->onQueue('csv_imports');
         }
     }
 
@@ -31,6 +32,22 @@ class CsvImportService implements CsvImportInterface
                 if (str_contains($config["info"], 'uniqueIndex'))
                 {
                     $uniqueIndex = $dbKey;
+                }
+                if (str_contains($config["info"], 'relationship'))
+                {
+                    $strArray = explode("|", $config["info"]);
+                    foreach ($strArray as $str)
+                    {
+                        if (str_contains($str, 'relationship'))
+                        {
+                            $relatedTableName = str_replace('relationship:', "", $str);
+                        }
+                        if (str_contains($str, 'foreignKey'))
+                        {
+                            $foreignKey = str_replace('foreignKey:', "", $str);
+                        }
+                    }
+                    $row[$config["csv"]] = DB::table($relatedTableName)->where($foreignKey, $row[$config["csv"]])->first()->id ?? null;
                 }
             }
             if (!str_contains($config["rules"], 'required'))
