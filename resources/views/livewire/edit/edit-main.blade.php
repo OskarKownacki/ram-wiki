@@ -26,7 +26,7 @@
         <hr class="m-4">
         <div>
             @if ($selectedTabId === 1)
-                <form wire:submit="uploadRamsCsv" class="grid grid-cols-12 gap-4 col-span-12 p-4">
+                <form wire:submit="uploadCsv" class="grid grid-cols-12 gap-4 col-span-12 p-4">
                     <label for="csv_file"
                         class="col-span-2 col-start-1 bg-green-700 rounded-md p-2 flex items-center justify-between cursor-pointer">
                         CSV Import
@@ -72,9 +72,23 @@
                     </div>
                 </form>
             @elseif($selectedTabId === 2)
+                <form wire:submit="uploadCsv" class="grid grid-cols-12 gap-4 col-span-12 p-4">
+                    <label for="csv_file"
+                        class="col-span-2 col-start-1 bg-green-700 rounded-md p-2 flex items-center justify-between cursor-pointer">
+                        CSV Import
+                        @svg('heroicon-o-table-cells', ['class' => 'w-6 h-6 text-white'])
+                    </label>
+                    <input type="file" id="csv_file" name="csv_file" class="hidden" wire:model="csv_file"
+                        accept=".csv" />
 
+                    @if ($csv_file)
+                        <button type="submit"
+                            class="col-span-2 col-start-3 bg-accent rounded-md p-2 flex items-center justify-between">Import
+                            @svg('heroicon-o-arrow-up-on-square', ['class' => 'w-6 h-6', 'style' => 'color: #fff'])</button>
+                    @endif
+                </form>
             @elseif($selectedTabId === 3)
-                <form wire:submit="uploadTraitsCsv" class="grid grid-cols-12 gap-4 col-span-12 p-4">
+                <form wire:submit="uploadCsv" class="grid grid-cols-12 gap-4 col-span-12 p-4">
                     <label for="csv_file"
                         class="col-span-2 col-start-1 bg-green-700 rounded-md p-2 flex items-center justify-between cursor-pointer">
                         CSV Import

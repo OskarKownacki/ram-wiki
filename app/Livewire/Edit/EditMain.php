@@ -33,122 +33,34 @@ class EditMain extends Component
         $this->csvImportInterface = $csvImportInterface;
     }
 
- public function uploadRamsCsv()
- {
-     $this->validate();
-     $name = $this->csv_file->getClientOriginalName();
-     $this->csv_file->storeAs(path: 'imports', name: $name);
-     $path = storage_path('app/private/imports/' . $name);
-     $fields = [
-         'product_code' => [
-             'csv'   => 'Symbol',
-             'rules' => 'required|string',
-             'info'  => 'uniqueIndex',
-         ],
-         'description' => [
-             'csv'   => 'Opis',
-             'rules' => 'required|string',
-         ],
-         'manufacturer' => [
-             'csv'   => 'Producent',
-             'rules' => 'string',
-         ],
-         'hardware_trait_id' => [
-             'csv'   => 'Cecha',
-             'rules' => 'nullable',
-             'info'  => 'relationship:hardware_traits|foreignKey:name',
-         ],
-         'group' => [
-             'csv'   => 'Grupa',
-             'rules' => 'string',
-         ],
-     ];
-
-     if ($this->selectedTabId === 1)
-     {
-         $this->csvImportInterface->importCsvFile($path, $fields, 'Ram');
-     }
- }
-
-    public function uploadTraitsCsv()
+    public function uploadCsv()
     {
         $this->validate();
         $name = $this->csv_file->getClientOriginalName();
         $this->csv_file->storeAs(path: 'imports', name: $name);
         $path = storage_path('app/private/imports/' . $name);
 
+        $fieldsRam = config('csv-import.fields.ram');
 
-        $fields = [
-            'name' => [
-                'csv'   => 'Nazwa',
-                'rules' => 'required|string',
-                'info'  => 'uniqueIndex',
-            ],
-            'capacity' => [
-                'csv'   => 'Pojemność całkowita',
-                'rules' => 'required|string',
-            ],
-            'bundle' => [
-                'csv'   => 'Zestaw',
-                'rules' => 'required|string',
-            ],
-            'type' => [
-                'csv'   => 'Typ',
-                'rules' => 'required|string',
-            ],
-            'rank' => [
-                'csv'   => 'Rank',
-                'rules' => 'required|string',
-            ],
-            'memory_type' => [
-                'csv'   => 'Rodzaj pamięci',
-                'rules' => 'required|string',
-            ],
-            'ecc_support' => [
-                'csv'   => 'Obsługa ECC',
-                'rules' => 'required|boolean',
-            ],
-            'ecc_registered' => [
-                'csv'   => 'Rejestrowanie (ECC Registered)',
-                'rules' => 'boolean',
-            ],
-            'speed' => [
-                'csv'   => 'Szybkość modułu',
-                'rules' => 'required|string',
-            ],
-            'frequency' => [
-                'csv'   => 'Częstotliwość',
-                'rules' => 'required|string',
-            ],
-            'cycle_latency' => [
-                'csv'   => 'Opóźnienie (Cycle Latency)',
-                'rules' => 'string',
-            ],
-            'voltage_v' => [
-                'csv'   => 'Napięcie (V)',
-                'rules' => 'numeric|nullable',
-            ],
-            'bus' => [
-                'csv'   => 'Złącze',
-                'rules' => 'string',
-            ],
-            'module_build' => [
-                'csv'   => 'Budowa modułu',
-                'rules' => 'string',
-            ],
-            'module_ammount' => [
-                'csv'   => 'Liczba modułów',
-                'rules' => 'string',
-            ],
-            'guarancy' => [
-                'csv'   => 'Gwarancja',
-                'rules' => 'string',
-            ],
-        ];
 
+        $fieldsTrait = config('csv-import.fields.trait');
+
+        $fieldsServer = config('csv-import.fields.server');
+
+        if ($this->selectedTabId === 1)
+        {
+            $this->csvImportInterface->importCsvFile($path, $fieldsRam, 'hardwareTrait');
+            $this->csv_file = null;
+        }
+        if ($this->selectedTabId === 2)
+        {
+            $this->csvImportInterface->importCsvFile($path, $fieldsServer, 'Server');
+            $this->csv_file = null;
+        }
         if ($this->selectedTabId === 3)
         {
-            $this->csvImportInterface->importCsvFile($path, $fields, 'hardwareTrait');
+            $this->csvImportInterface->importCsvFile($path, $fieldsTrait, 'Ram');
+            $this->csv_file = null;
         }
     }
 }
