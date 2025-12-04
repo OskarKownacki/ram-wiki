@@ -28,7 +28,7 @@
             @if ($selectedTabId === 1)
                 <form wire:submit="uploadCsv" class="grid grid-cols-12 gap-4 col-span-12 p-4">
                     <label for="csv_file"
-                        class="col-span-2 col-start-1 bg-green-700 rounded-md p-2 flex items-center justify-between cursor-pointer">
+                        class="col-span-2 col-start-1 bg-green-700 hover:bg-green-600 rounded-md p-2 flex items-center justify-between cursor-pointer">
                         CSV Import
                         @svg('heroicon-o-table-cells', ['class' => 'w-6 h-6 text-white'])
                     </label>
@@ -37,38 +37,50 @@
 
                     @if ($csv_file)
                         <button type="submit"
-                            class="col-span-2 col-start-3 bg-accent rounded-md p-2 flex items-center justify-between">Import
+                            class="col-span-2 col-start-3 bg-accent hover:bg-secondary rounded-md p-2 flex items-center justify-between">Import
                             @svg('heroicon-o-arrow-up-on-square', ['class' => 'w-6 h-6', 'style' => 'color: #fff'])</button>
                     @endif
                 </form>
-                <form class="grid grid-cols-12 gap-4 p-4 grid-rows-5" id="ram-form">
+                <form class="grid grid-cols-12 gap-4 p-4 grid-rows-6" id="ram-form" wire:submit="saveRam">
                     <div class="col-span-3 row-start-1 flex flex-col">
                         <label
                             class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*'] mb-1"
-                            for="ProductCode">Producer code</label>
-                        <input type="text" name="ProductCode"
-                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50" />
+                            for="producer">Producer code</label>
+                        <input type="text" name="producerCode"
+                            class="border-2 rounded-md border-accent focus:ring focus:ring-accent p-2 focus:outline-none bg-primary/50"
+                            wire:model="producerCode" />
                     </div>
                     <div class="col-span-3 row-start-1 col-start-4 flex flex-col">
-                        <label
-                            class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*'] mb-1"
-                            for="TraitId">Trait ID</label>
-                        <input type="number" name="TraitId"
-                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50" />
+                        <label class="text-white text-sm font-bold after:ml-0.5 mb-1" for="TraitId">Trait name</label>
+                        <input type="text" name="TraitId"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none focus:ring focus:ring-accent bg-primary/50"
+                            wire:model.live.debounce.150ms='hardwareTraits' list="hardwareTraitsAutocomplete" />
+                        <datalist id='hardwareTraitsAutocomplete'>
+                            @if (isset($autocompleteTraits))
+                                @foreach ($autocompleteTraits as $trait)
+                                    <option value={{ $trait->name }} class="bg-accent" />
+                                @endforeach
+                            @endif
+                        </datalist>
                     </div>
                     <div class="col-span-6 row-start-2 flex flex-col">
-                        <label
-                            class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*'] mb-1"
+                        <label class="text-white text-sm font-bold after:ml-0.5 mb-1"
                             for="Manufacturer">Manufacturer</label>
                         <input type="text" name="Manufacturer"
-                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50" />
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='manufacturer' />
                     </div>
                     <div class="col-span-6 row-start-3 row-span-3 flex flex-col">
-                        <label
-                            class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*'] mb-1"
+                        <label class="text-white text-sm font-bold after:ml-0.5 mb-1"
                             for="Description">Description</label>
-                        <textarea name="Description" class="border-2 rounded-md border-accent p-2 focus:outline-none  bg-primary/50"
-                            form="ram-form" rows=10> </textarea>
+                        <textarea name="Description"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none  bg-primary/50 focus:ring focus:ring-accent"
+                            form="ram-form" rows=10 wire:model='description'> </textarea>
+                    </div>
+                    <div class="col-span-6  row-start-6 flex items-center row-span-1 ">
+                        <button class="bg-accent h-12 hover:bg-secondary w-full rounded-md" type="submit">
+                            Submit
+                        </button>
                     </div>
                 </form>
             @elseif($selectedTabId === 2)

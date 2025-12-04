@@ -3,9 +3,12 @@
 namespace App\Livewire\Edit;
 
 use App\Interfaces\CsvImportInterface;
+use App\Models\HardwareTrait;
+use App\Models\Ram;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Masmerise\Toaster\Toaster;
 
 class EditMain extends Component
 {
@@ -18,6 +21,16 @@ class EditMain extends Component
 
     private CsvImportInterface $csvImportInterface;
 
+    public $autocompleteTraits;
+
+    public $hardwareTraits = '';
+
+    public $manufacturer;
+
+    public $producerCode;
+
+    public $description;
+
     public function render()
     {
         return view('livewire.edit.edit-main');
@@ -26,6 +39,11 @@ class EditMain extends Component
     public function setTab($tabId)
     {
         $this->selectedTabId = $tabId;
+    }
+
+    public function updatedHardwareTraits($value)
+    {
+        $this->autocompleteTraits = HardwareTrait::where('name', 'like', $value . '%')->take(5)->get();
     }
 
     public function boot(CsvImportInterface $csvImportInterface)
@@ -49,7 +67,7 @@ class EditMain extends Component
 
         if ($this->selectedTabId === 1)
         {
-            $this->csvImportInterface->importCsvFile($path, $fieldsRam, 'hardwareTrait');
+            $this->csvImportInterface->importCsvFile($path, $fieldsRam, 'Ram');
             $this->csv_file = null;
         }
         if ($this->selectedTabId === 2)
@@ -59,8 +77,19 @@ class EditMain extends Component
         }
         if ($this->selectedTabId === 3)
         {
-            $this->csvImportInterface->importCsvFile($path, $fieldsTrait, 'Ram');
+            $this->csvImportInterface->importCsvFile($path, $fieldsTrait, 'hardwareTrait');
             $this->csv_file = null;
         }
+    }
+
+    public function saveRam()
+    {
+        $ram = new Ram();
+        $ram->manufacturer = $this->manufacturer;
+        $ram->description = $this->description;
+        $ram->product_code = $this->producerCode;
+        $ram->hardware_trait_id = HardwareTrait::where('name', '=', $this->hardwareTraits)->first()-> id ?? null;
+        $ram->save();
+        Toaster::success('Dodano RAMa!');
     }
 }
