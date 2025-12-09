@@ -5,7 +5,10 @@
         <p class="text-xl">{{ $foundRam->description }}</p>
         <p>Manufacturer: {{ $foundRam->manufacturer }}</p>
     </div>
-    <div>
-
+    <div class="col-span-1 pl-2">
+        <h1 class="text-2xl">Matching servers</h1>
+        @foreach ($matchingServers as $server)
+            <p>{{ $server->manufacturer }} - {{ $server->model }}</p>
+        @endforeach
     </div>
 </div>
