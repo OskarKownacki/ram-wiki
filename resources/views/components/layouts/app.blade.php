@@ -30,12 +30,15 @@
     <main class="grow">
         {{ $slot }}
     </main>
-    @fluxScripts
     <footer class="bg-footer w-full  h-[10vh] flex items-center justify-center text-white">
         &copy; {{ date('Y') }} Ram wiki Esus IT. All rights reserved.
     </footer>
+
+    @vite(['resources/js/app.js'])
+    @fluxScripts
     @livewireScripts
     <x-toaster-hub />
+
 </body>
 
 </html>

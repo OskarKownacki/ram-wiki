@@ -89,7 +89,13 @@ class EditMain extends Component
         $ram->description = $this->description;
         $ram->product_code = $this->producerCode;
         $ram->hardware_trait_id = HardwareTrait::where('name', '=', $this->hardwareTraits)->first()-> id ?? null;
-        $ram->save();
-        Toaster::success('Dodano RAMa!');
+        if ($ram->save())
+        {
+            $this->manufacturer = null;
+            $this->description = null;
+            $this->producerCode = null;
+            $this->hardwareTraits = null;
+            Toaster::success('Dodano RAMa!');
+        }
     }
 }

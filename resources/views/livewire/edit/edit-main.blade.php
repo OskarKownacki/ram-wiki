@@ -58,7 +58,8 @@
                         <datalist id='hardwareTraitsAutocomplete'>
                             @if (isset($autocompleteTraits))
                                 @foreach ($autocompleteTraits as $trait)
-                                    <option value={{ $trait->name }} class="bg-accent" />
+                                    <option value={{ $trait->name }} class="bg-accent"
+                                        wire:key="{{ $trait->id }}" />
                                 @endforeach
                             @endif
                         </datalist>
@@ -119,5 +120,4 @@
 
         </div>
     </div>
-
 </div>
