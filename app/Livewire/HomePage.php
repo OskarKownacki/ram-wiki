@@ -25,6 +25,6 @@ class HomePage extends Component
 
     public function onSearchSubmit()
     {
-        $this->foundRams = Ram::where('product_code', '=', $this->searchValue)->get();
+        $this->foundRams = Ram::with('hardwareTrait')->where('product_code', '=', $this->searchValue)->get();
     }
 }

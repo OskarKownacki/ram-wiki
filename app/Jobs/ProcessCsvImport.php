@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\HardwareTrait;
 use App\Models\Ram;
+use App\Models\Server;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -64,13 +65,17 @@ class ProcessCsvImport implements ShouldQueue
 
         $validatedData = $validator->validated();
         $fieldsToUpdate = array_keys($validatedData);
-        switch($this->modelName)
+        switch ($this->modelName)
         {
             case 'hardwareTrait':
                 HardwareTrait::upsert([$validatedData], uniqueBy: [$this->uniqueIndex], update: $fieldsToUpdate);
                 break;
             case 'Ram':
                 Ram::upsert([$validatedData], uniqueBy: [$this->uniqueIndex], update: $fieldsToUpdate);
+                break;
+            case 'Server':
+                Server::upsert([$validatedData], uniqueBy: [$this->uniqueIndex], update: $fieldsToUpdate);
+                break;
         }
     }
 }

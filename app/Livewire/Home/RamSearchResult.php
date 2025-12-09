@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Home;
 
-use App\Models\Server;
+use App\Models\HardwareTrait;
 use Livewire\Component;
 
 class RamSearchResult extends Component
@@ -13,7 +13,8 @@ class RamSearchResult extends Component
 
     public function boot()
     {
-        $this->matchingServers = Server::
+        $this->matchingServers = HardwareTrait::with('servers')->where('name', $this->foundRam->hardwareTrait->name)->get();
+        dd($this->matchingServers);
     }
 
     public function render()

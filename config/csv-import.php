@@ -21,10 +21,10 @@ return [
                 'rules' => 'nullable',
                 'info'  => 'relationship:hardware_traits|foreignKey:name',
             ],
-            'group' => [
-                'csv'   => 'Grupa',
-                'rules' => 'string',
-            ],
+            // 'group' => [
+            //     'csv'   => 'Grupa',
+            //     'rules' => 'string',
+            // ],
         ],
         'trait' => [
             'name' => [
@@ -106,7 +106,8 @@ return [
             'hardware_trait_id' => [
                 'csv'   => 'CECHA',
                 'rules' => 'nullable',
-                'info'  => 'relationship:hardware_traits|foreignKey:name'],
+                'info'  => 'MtM:hardware_trait_server',
+            ],
         ],
     ],
 ];

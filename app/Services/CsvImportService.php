@@ -49,13 +49,21 @@ class CsvImportService implements CsvImportInterface
                     }
                     $row[$config["csv"]] = DB::table($relatedTableName)->where($foreignKey, $row[$config["csv"]])->first()->id ?? null;
                 }
+                if (str_contains($config["info"], 'MtM'))
+                {
+                    $strArray = explode(':', $config["info"]);
+                    $pivotTableName = $strArray[1];
+                    $data['MtMInfo'] = $pivotTableName;
+                    $data['MtMValue'] = $row[$config["csv"]];
+                    continue;
+                }
             }
             if (!str_contains($config["rules"], 'required'))
             {
                 $optionalFields[] = $dbKey;
             }
 
-            $data[$dbKey] = $row[$config["csv"]];
+            $data[$dbKey] = $row[$config["csv"]] ?? null;
             $rules[$dbKey] = $config["rules"];
         }
 
