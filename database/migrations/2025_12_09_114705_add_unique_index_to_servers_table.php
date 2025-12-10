@@ -13,7 +13,7 @@ return new class () extends Migration
     {
         Schema::table('servers', function (Blueprint $table)
         {
-            $table->foreignId('hardware_trait_id')->nullable()->constrained('hardware_traits')->after('model');
+            $table->unique('model');
         });
     }
 
@@ -24,8 +24,7 @@ return new class () extends Migration
     {
         Schema::table('servers', function (Blueprint $table)
         {
-            $table->dropForeign(['hardware_trait_id']);
-            $table->dropColumn('hardware_trait_id');
+            $table->dropUnique(['model']);
         });
     }
 };

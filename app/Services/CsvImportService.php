@@ -12,6 +12,7 @@ class CsvImportService implements CsvImportInterface
     public function importCsvFile(string $filePath, array $fields, string $modelName): void
     {
         $rows = SimpleExcelReader::create($filePath)->getRows();
+        $index = 0;
         foreach ($rows as $row)
         {
             $mappedData = $this->map($row, $fields);
@@ -66,7 +67,6 @@ class CsvImportService implements CsvImportInterface
             $data[$dbKey] = $row[$config["csv"]] ?? null;
             $rules[$dbKey] = $config["rules"];
         }
-
         return ['data' => $data, 'rules' => $rules, 'optionalFields' => $optionalFields, 'uniqueIndex' => $uniqueIndex];
     }
 }

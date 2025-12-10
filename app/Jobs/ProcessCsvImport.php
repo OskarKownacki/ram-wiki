@@ -7,6 +7,7 @@ use App\Models\Ram;
 use App\Models\Server;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -75,6 +76,20 @@ class ProcessCsvImport implements ShouldQueue
                 break;
             case 'Server':
                 Server::upsert([$validatedData], uniqueBy: [$this->uniqueIndex], update: $fieldsToUpdate);
+                if (!empty($this->data['MtMInfo']) && !empty($this->data['MtMValue']))
+                {
+                    $traitId = HardwareTrait::where('name', $this->data['MtMValue'])->first()->id;
+                    $serverId = Server::where($this->uniqueIndex, $this->data[$this->uniqueIndex])->first()->id;
+                    if ($traitId && $serverId)
+                    {
+                        DB::table($this->data['MtMInfo'])->updateOrInsert(
+                            [
+                                'server_id'         => $serverId,
+                                'hardware_trait_id' => $traitId,
+                            ],
+                        );
+                    }
+                }
                 break;
         }
     }
