@@ -5,6 +5,7 @@ namespace App\Livewire\Edit;
 use App\Interfaces\CsvImportInterface;
 use App\Models\HardwareTrait;
 use App\Models\Ram;
+use App\Models\Server;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -21,15 +22,23 @@ class EditMain extends Component
 
     private CsvImportInterface $csvImportInterface;
 
-    public $autocompleteTraits;
+    public $autocompleteTraitRam;
 
-    public $hardwareTraits = '';
+    public $hardwareTraitRam = '';
 
     public $manufacturer;
 
     public $producerCode;
 
     public $description;
+
+    public $manufacturerServer;
+
+    public $modelServer;
+
+    public $autocompleteTraitsServer;
+
+    public $hardwareTraitsServer = '';
 
     public function render()
     {
@@ -39,11 +48,18 @@ class EditMain extends Component
     public function setTab($tabId)
     {
         $this->selectedTabId = $tabId;
+
+        $this->dispatch('scroll-to-tab', tabId: $tabId);
     }
 
-    public function updatedHardwareTraits($value)
+    public function updatedHardwareTraitRam($value)
     {
-        $this->autocompleteTraits = HardwareTrait::where('name', 'like', $value . '%')->take(5)->get();
+        $this->autocompleteTraitRam = HardwareTrait::where('name', 'like', $value . '%')->take(5)->get();
+    }
+
+    public function updatedHardwareTraitsServer($value)
+    {
+        $this->autocompleteTraitsServer = HardwareTrait::where('name', 'like', $value . '%')->take(5)->get();
     }
 
     public function boot(CsvImportInterface $csvImportInterface)
@@ -94,8 +110,26 @@ class EditMain extends Component
             $this->manufacturer = null;
             $this->description = null;
             $this->producerCode = null;
-            $this->hardwareTraits = null;
+            $this->hardwareTraitRam = null;
             Toaster::success('Dodano RAMa!');
+        }
+    }
+
+    public function saveServer()
+    {
+        $server = new Server();
+        $server->manufacturer = $this->manufacturerServer;
+        $server->model = $this->modelServer;
+        if ($server->save())
+        {
+            $this->manufacturerServer = null;
+            $this->modelServer = null;
+
+            $server->hardwareTraits()->attach(
+                HardwareTrait::where('name', '=', $this->hardwareTraitsServer)->first()-> id ?? null
+            );
+            $this->hardwareTraitsServer = null;
+            Toaster::success('Dodano Serwer!');
         }
     }
 }

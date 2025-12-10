@@ -41,7 +41,8 @@
                             @svg('heroicon-o-arrow-up-on-square', ['class' => 'w-6 h-6', 'style' => 'color: #fff'])</button>
                     @endif
                 </form>
-                <form class="grid grid-cols-12 gap-4 p-4 grid-rows-6" id="ram-form" wire:submit="saveRam">
+                <form class="grid grid-cols-12 gap-4 p-4 grid-rows-6" id="ram-form" wire:submit="saveRam"
+                    data-tab="1">
                     <div class="col-span-3 row-start-1 flex flex-col">
                         <label
                             class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*'] mb-1"
@@ -54,10 +55,10 @@
                         <label class="text-white text-sm font-bold after:ml-0.5 mb-1" for="TraitId">Trait name</label>
                         <input type="text" name="TraitId"
                             class="border-2 rounded-md border-accent p-2 focus:outline-none focus:ring focus:ring-accent bg-primary/50"
-                            wire:model.live.debounce.150ms='hardwareTraits' list="hardwareTraitsAutocomplete" />
+                            wire:model.live.debounce.150ms='hardwareTraitRam' list="hardwareTraitsAutocomplete" />
                         <datalist id='hardwareTraitsAutocomplete'>
-                            @if (isset($autocompleteTraits))
-                                @foreach ($autocompleteTraits as $trait)
+                            @if (isset($autocompleteTraitsRam))
+                                @foreach ($autocompleteTraitsRam as $trait)
                                     <option value={{ $trait->name }} class="bg-accent"
                                         wire:key="{{ $trait->id }}" />
                                 @endforeach
@@ -100,6 +101,44 @@
                             @svg('heroicon-o-arrow-up-on-square', ['class' => 'w-6 h-6', 'style' => 'color: #fff'])</button>
                     @endif
                 </form>
+                <form class="grid grid-cols-12 gap-4 p-4 grid-rows-6" id="ram-form" wire:submit="saveServer"
+                    data-tab="2">
+                    <div class="col-span-6 row-start-1 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 after:text-red-500 after:content-['*'] mb-1"
+                            for="producer">Model</label>
+                        <input type="text" name="producerCode"
+                            class="border-2 rounded-md border-accent focus:ring focus:ring-accent p-2 focus:outline-none bg-primary/50"
+                            wire:model="modelServer" />
+                    </div>
+                    <div class="col-span-6 row-start-2 flex flex-col">
+                        <label class="text-white text-sm font-bold after:ml-0.5 mb-1" for="TraitId">Trait name</label>
+                        <input type="text" name="TraitId"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none focus:ring focus:ring-accent bg-primary/50"
+                            wire:model.live.debounce.150ms='hardwareTraitsServer'
+                            list="hardwareTraitsServerAutocomplete" />
+                        <datalist id='hardwareTraitsServerAutocomplete'>
+                            @if (isset($autocompleteTraitsServer))
+                                @foreach ($autocompleteTraitsServer as $trait)
+                                    <option value={{ $trait->name }} class="bg-accent"
+                                        wire:key="{{ $trait->id }}" />
+                                @endforeach
+                            @endif
+                        </datalist>
+                    </div>
+                    <div class="col-span-6 row-start-3 flex flex-col">
+                        <label class="text-white text-sm font-bold after:ml-0.5 mb-1"
+                            for="Manufacturer">Manufacturer</label>
+                        <input type="text" name="Manufacturer"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='manufacturerServer' />
+                    </div>
+                    <div class="col-span-6  row-start-4 flex items-center row-span-1 ">
+                        <button class="bg-accent h-12 hover:bg-secondary w-full rounded-md" type="submit">
+                            Submit
+                        </button>
+                    </div>
+                </form>
             @elseif($selectedTabId === 3)
                 <form wire:submit="uploadCsv" class="grid grid-cols-12 gap-4 col-span-12 p-4">
                     <label for="csv_file"
@@ -120,4 +159,24 @@
 
         </div>
     </div>
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('scroll-to-tab', ({
+                tabId
+            }) => {
+                const el = document.querySelector(`[data-tab="${tabId}"]`);
+                if (!el) return;
+
+                const rect = el.getBoundingClientRect();
+                const y = rect.top + window.scrollY;
+                const offset = window.innerHeight / 2 - rect.height / 2;
+
+                window.scrollTo({
+                    top: y - offset,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+
 </div>
