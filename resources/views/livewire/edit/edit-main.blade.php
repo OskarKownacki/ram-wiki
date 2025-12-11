@@ -155,6 +155,74 @@
                             @svg('heroicon-o-arrow-up-on-square', ['class' => 'w-6 h-6', 'style' => 'color: #fff'])</button>
                     @endif
                 </form>
+                <form wire:submit="saveTrait" class="grid grid-cols-12 gap-4 p-4 grid-rows-6" data-tab="3">
+                    <div class="col-span-6 row-start-1 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitName">Trait
+                            Name</label>
+                        <input type="text" name="traitName"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='nameTrait' />
+                    </div>
+                    <div class="col-span-2 row-start-2 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitCapacity">Capacity</label>
+                        <input type="text" name="traitCapacity"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='capacityTrait' />
+                    </div>
+                    <div class="col-span-2 row-start-2 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitBundle">Bundle</label>
+                        <input type="text" name="traitBundle"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='bundleTrait' />
+                    </div>
+                    <div class="col-span-2 row-start-2 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitType">Type</label>
+                        <input type="text" name="traitType"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='typeTrait' />
+                    </div>
+                    <div class="col-span-3 row-start-3 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitRank">Rank</label>
+                        <input type="text" name="traitRank"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='rankTrait' />
+                    </div>
+                    <div class="col-span-3 row-start-3 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitSpeed">Speed</label>
+                        <input type="text" name="traitSpeed"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='speedTrait' />
+                    </div>
+                    <div class="col-span-1 row-start-4 flex flex-col items-start justify-start">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitEccSupport">ECC Support</label>
+                        <input type="checkbox" name="traitEccSupport"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='EccSupportTrait' />
+                    </div>
+
+                    <div class="col-span-1 row-start-4 flex flex-col items-start justify-start">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitEccRegistered">ECC Registered</label>
+                        <input type="checkbox" name="traitEccRegistered"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='EccRegisteredTrait' />
+                    </div>
+                </form>
             @endif
 
         </div>
@@ -164,17 +232,19 @@
             Livewire.on('scroll-to-tab', ({
                 tabId
             }) => {
-                const el = document.querySelector(`[data-tab="${tabId}"]`);
-                if (!el) return;
+                setTimeout(() => {
+                    const el = document.querySelector(`[data-tab="${tabId}"]`);
+                    if (!el) return;
 
-                const rect = el.getBoundingClientRect();
-                const y = rect.top + window.scrollY;
-                const offset = window.innerHeight / 2 - rect.height / 2;
+                    const rect = el.getBoundingClientRect();
+                    const y = rect.top + window.scrollY;
+                    const offset = window.innerHeight / 2 - rect.height / 2;
 
-                window.scrollTo({
-                    top: y - offset,
-                    behavior: 'smooth'
-                });
+                    window.scrollTo({
+                        top: y - offset,
+                        behavior: 'smooth'
+                    });
+                }, 1);
             });
         });
     </script>
