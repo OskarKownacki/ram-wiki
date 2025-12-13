@@ -205,22 +205,78 @@
                             class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
                             wire:model='speedTrait' />
                     </div>
-                    <div class="col-span-1 row-start-4 flex flex-col items-start justify-start">
-                        <label
-                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
-                            for="traitEccSupport">ECC Support</label>
+                    <div class="col-span-2 row-start-4 flex flex-row items-center justify-start">
                         <input type="checkbox" name="traitEccSupport"
-                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
-                            wire:model='EccSupportTrait' />
+                            class="border-2 size-6 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='eccSupportTrait' />
+                        <label
+                            class="text-white text-sm font-bold ml-2 align-middle items-center after:text-red-500 after:content-['*']"
+                            for="traitEccSupport">ECC Support</label>
                     </div>
+                    <div class="col-span-2 row-start-4 flex flex-row items-center justify-start">
+                        <input type="checkbox" name="traitEccRegistered"
+                            class="border-2 rounded-md border-accent p-2 size-6 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='eccRegisteredTrait' />
+                        <label
+                            class="text-white text-sm font-bold ml-2 items-center align-middle after:text-red-500 after:content-['*']"
+                            for="traitEccRegistered">ECC Registered</label>
 
-                    <div class="col-span-1 row-start-4 flex flex-col items-start justify-start">
+                    </div>
+                    <div class="col-span-2 row-start-5 flex flex-col">
                         <label
                             class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
-                            for="traitEccRegistered">ECC Registered</label>
-                        <input type="checkbox" name="traitEccRegistered"
+                            for="traitFrequency">Frequency</label>
+                        <input type="text" name="traitFrequency"
                             class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
-                            wire:model='EccRegisteredTrait' />
+                            wire:model='frequencyTrait' />
+                    </div>
+                    <div class="col-span-1 row-start-5 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitCycleLatency">Cycle Latency</label>
+                        <input type="number" name="traitCycleLatency"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='cycleLatencyTrait' />
+                    </div>
+                    <div class="col-span-1 row-start-5 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitVoltage">Voltage (V)</label>
+                        <input type="number" name="traitVoltage"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='voltageTrait' />
+                    </div>
+                    <div class="col-span-2 row-start-5 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitPort">Port</label>
+                        <input type="text" name="traitPort"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='portTrait' />
+                    </div>
+                    <div class="col-span-2 row-start-6 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitModuleBuild">Module Build</label>
+                        <input type="text" name="traitModuleBuild"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='moduleBuildTrait' />
+                    </div>
+                    <div class="col-span-2 row-start-6 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitModuleAmmount">Module Ammount</label>
+                        <input type="text" name="traitModuleAmmount"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='moduleAmmountTrait' />
+                    </div>
+                    <div class="col-span-2 row-start-6 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitGuarancy">Guarancy</label>
+                        <input type="text" name="traitGuarancy"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='guarancyTrait' />
                     </div>
                 </form>
             @endif

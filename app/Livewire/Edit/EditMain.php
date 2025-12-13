@@ -40,6 +40,36 @@ class EditMain extends Component
 
     public $hardwareTraitsServer = '';
 
+    public $nameTrait;
+
+    public $capacityTrait;
+
+    public $bundleTrait;
+
+    public $typeTrait;
+
+    public $speedTrait;
+
+    public $rankTrait;
+
+    public $voltageTrait;
+
+    public bool $eccSupportTrait = false;
+
+    public bool $eccRegisteredTrait = false;
+
+    public $frequencyTrait;
+
+    public $cycleLatencyTrait;
+
+    public $portTrait;
+
+    public $moduleBuildTrait;
+
+    public $moduleAmmountTrait;
+
+    public $guarancyTrait;
+
     public function render()
     {
         return view('livewire.edit.edit-main');
