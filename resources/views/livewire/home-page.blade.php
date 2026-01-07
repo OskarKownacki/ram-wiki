@@ -18,7 +18,8 @@
         <div class="col-span-10 col-start-2">
             @if (isset($foundRams))
                 @foreach ($foundRams as $foundRam)
-                    <livewire:home.ram-search-result :foundRam="$foundRam" />
+                    <livewire:home.ram-search-result :foundRam="$foundRam"
+                        wire:key="ram-search-result-{{ $foundRam->id }}" />
                 @endforeach
             @endif
         </div>

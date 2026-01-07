@@ -278,6 +278,11 @@
                             class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
                             wire:model='guarancyTrait' />
                     </div>
+                    <div class="col-span-6  row-start-7 flex items-center row-span-1 ">
+                        <button class="bg-accent h-12 hover:bg-secondary w-full rounded-md" type="submit">
+                            Submit
+                        </button>
+                    </div>
                 </form>
             @endif
 

@@ -7,7 +7,6 @@ use App\Models\Ram;
 use App\Models\Server;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -26,6 +25,10 @@ class ProcessCsvImport implements ShouldQueue
 
     public string $modelName;
 
+    public $validatedData;
+
+    public $fieldsToUpdate;
+
     public function __construct(array $data, array $rules, array $optionalFields, string $uniqueIndex, string $modelName)
     {
         $this->data = $data;
@@ -37,57 +40,62 @@ class ProcessCsvImport implements ShouldQueue
 
     public function handle(): void
     {
-        try
+        foreach ($this->data as $data)
         {
-            $validator = Validator::make($this->data, $this->rules);
-            $validator->validate();
-        }
-        catch (ValidationException $e)
-        {
-            // Log::error('CSV import vaildation failed for traits on trait:' . $this->data['name'] . ' with errors: '  . json_encode($validator->errors()->all()));
-            foreach ($validator->errors()->all() as $error)
+            try
             {
-                if (str_contains($error, 'required'))
-                {
-                    throw $e;
-                }
+                $validator = Validator::make($data, $this->rules);
+                $validator->validate();
             }
-            foreach ($this->optionalFields as $field)
+            catch (ValidationException $e)
             {
-                if ($validator->errors()->has($field))
+                // Log::error('CSV import vaildation failed for traits on trait:' . $this->data['name'] . ' with errors: '  . json_encode($validator->errors()->all()));
+                foreach ($validator->errors()->all() as $error)
                 {
-                    $this->data[$field] = null;
-                    // Log::error('The field that didnt pass validation wasnt essential. It will be nulled, make sure to investigate the issue. Trait name: ' . $this->data["name"]);
+                    if (str_contains($error, 'required'))
+                    {
+                        throw $e;
+                    }
                 }
+                foreach ($this->optionalFields as $field)
+                {
+                    if ($validator->errors()->has($field))
+                    {
+                        $data[$field] = null;
+                        // Log::error('The field that didnt pass validation wasnt essential. It will be nulled, make sure to investigate the issue. Trait name: ' . $this->data["name"]);
+                    }
+                }
+                $validator = Validator::make($data, $this->rules);
+                $validator->validate();
             }
-            $validator = Validator::make($this->data, $this->rules);
-            $validator->validate();
-        }
 
-        $validatedData = $validator->validated();
-        $fieldsToUpdate = array_keys($validatedData);
+            $this->validatedData[] = $validator->validated();
+            $this->fieldsToUpdate = array_keys($validator->validated());
+        }
         switch ($this->modelName)
         {
             case 'hardwareTrait':
-                HardwareTrait::upsert([$validatedData], uniqueBy: [$this->uniqueIndex], update: $fieldsToUpdate);
+                HardwareTrait::upsert($this->validatedData, uniqueBy: [$this->uniqueIndex], update: $this->fieldsToUpdate);
                 break;
             case 'Ram':
-                Ram::upsert([$validatedData], uniqueBy: [$this->uniqueIndex], update: $fieldsToUpdate);
+                Ram::upsert($this->validatedData, uniqueBy: [$this->uniqueIndex], update: $this->fieldsToUpdate);
                 break;
             case 'Server':
-                Server::upsert([$validatedData], uniqueBy: [$this->uniqueIndex], update: $fieldsToUpdate);
+                Server::upsert($this->validatedData, uniqueBy: [$this->uniqueIndex], update: $this->fieldsToUpdate);
                 if (!empty($this->data['MtMInfo']) && !empty($this->data['MtMValue']))
                 {
-                    $traitId = HardwareTrait::where('name', $this->data['MtMValue'])->first()->id;
-                    $serverId = Server::where($this->uniqueIndex, $this->data[$this->uniqueIndex])->first()->id;
-                    if ($traitId && $serverId)
+                    $server = Server::where($this->uniqueIndex, $this->validatedData[$this->uniqueIndex] ?? null)->first();
+                    if ($server)
                     {
-                        DB::table($this->data['MtMInfo'])->updateOrInsert(
-                            [
-                                'server_id'         => $serverId,
-                                'hardware_trait_id' => $traitId,
-                            ],
-                        );
+                        $traitNames = array_map('trim', explode($this->data['MtMDelimeter'], $this->data['MtMValue']));
+                        foreach ($traitNames as $traitName)
+                        {
+                            $trait = HardwareTrait::where('name', $traitName)->first();
+                            if ($trait)
+                            {
+                                $server->hardwareTraits()->syncWithoutDetaching($trait->id);
+                            }
+                        }
                     }
                 }
                 break;

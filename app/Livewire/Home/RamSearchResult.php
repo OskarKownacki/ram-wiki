@@ -9,11 +9,14 @@ class RamSearchResult extends Component
 {
     public $foundRam;
 
-    public $matchingServers;
+    public $matchingServers = [];
 
-    public function boot()
+    public function mount()
     {
-        $this->matchingServers = HardwareTrait::with('servers')->where('name', $this->foundRam->hardwareTrait->name)->first()->servers;
+        if (isset($this->foundRam->hardwareTrait->name))
+        {
+            $this->matchingServers = HardwareTrait::with('servers')->where('name', $this->foundRam->hardwareTrait->name)->first()->servers;
+        }
     }
 
     public function render()

@@ -6,7 +6,7 @@ return [
             'product_code' => [
                 'csv'   => 'Symbol',
                 'rules' => 'required|string',
-                'info'  => 'uniqueIndex',
+                'info'  => ['uniqueIndex' => true],
             ],
             'description' => [
                 'csv'   => 'Opis',
@@ -19,7 +19,7 @@ return [
             'hardware_trait_id' => [
                 'csv'   => 'Cecha',
                 'rules' => 'nullable',
-                'info'  => 'relationship:hardware_traits|foreignKey:name',
+                'info'  => ['relationship' => 'hardware_traits', 'foreignKey' => 'name'],
             ],
             // 'group' => [
             //     'csv'   => 'Grupa',
@@ -30,7 +30,7 @@ return [
             'name' => [
                 'csv'   => 'Nazwa',
                 'rules' => 'required|string',
-                'info'  => 'uniqueIndex',
+                'info'  => ['uniqueIndex' => true],
             ],
             'capacity' => [
                 'csv'   => 'Pojemność całkowita',
@@ -101,12 +101,13 @@ return [
             'model' => [
                 'csv'   => 'MODEL',
                 'rules' => 'required|string',
-                'info'  => 'uniqueIndex',
+                'info'  => ['uniqueIndex' => true],
             ],
             'hardware_trait_id' => [
                 'csv'   => 'CECHA',
                 'rules' => 'nullable',
-                'info'  => 'MtM:hardware_trait_server',
+                'info'  => ['MtM' => 'hardware_trait_server',
+                    'delimeter'   => ','],
             ],
         ],
     ],
