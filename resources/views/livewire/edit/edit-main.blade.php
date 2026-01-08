@@ -111,19 +111,33 @@
                             class="border-2 rounded-md border-accent focus:ring focus:ring-accent p-2 focus:outline-none bg-primary/50"
                             wire:model="modelServer" />
                     </div>
-                    <div class="col-span-6 row-start-2 flex flex-col">
-                        <label class="text-white text-sm font-bold after:ml-0.5 mb-1" for="TraitId">Trait name</label>
-                        <input type="text" name="TraitId"
-                            class="border-2 rounded-md border-accent p-2 focus:outline-none focus:ring focus:ring-accent bg-primary/50"
-                            wire:model.live.debounce.150ms='hardwareTraitsServer'
+                    <div class="col-span-6 row-start-2 flex flex-col" x-data="{ open: false }">
+                        <label class="text-white text-sm font-bold mb-1" for="TraitId">Trait name</label>
+
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            @foreach ($selectedTraits as $index => $traitName)
+                                <span class="bg-accent text-white px-2 py-1 rounded-md text-xs flex items-center">
+                                    {{ $traitName }}
+                                    <button type="button" wire:click="removeTrait({{ $index }})"
+                                        class="ml-2 hover:text-red-400">
+                                        &times;
+                                    </button>
+                                </span>
+                            @endforeach
+                        </div>
+
+                        <input type="text"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none focus:ring focus:ring-accent bg-primary/50 text-white"
+                            placeholder="Search and press Enter..."
+                            wire:model.live.debounce.150ms="hardwareTraitsServer"
+                            wire:keydown.enter.prevent="addTrait($event.target.value)"
+                            wire:key="trait-input-{{ count($selectedTraits) }}"
                             list="hardwareTraitsServerAutocomplete" />
-                        <datalist id='hardwareTraitsServerAutocomplete'>
-                            @if (isset($autocompleteTraitsServer))
-                                @foreach ($autocompleteTraitsServer as $trait)
-                                    <option value={{ $trait->name }} class="bg-accent"
-                                        wire:key="{{ $trait->id }}" />
-                                @endforeach
-                            @endif
+
+                        <datalist id="hardwareTraitsServerAutocomplete">
+                            @foreach ($autocompleteTraitsServer as $trait)
+                                <option value="{{ $trait->name }}">
+                            @endforeach
                         </datalist>
                     </div>
                     <div class="col-span-6 row-start-3 flex flex-col">
@@ -189,7 +203,7 @@
                             class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
                             wire:model='typeTrait' />
                     </div>
-                    <div class="col-span-3 row-start-3 flex flex-col">
+                    <div class="col-span-2 row-start-3 flex flex-col">
                         <label
                             class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
                             for="traitRank">Rank</label>
@@ -197,13 +211,21 @@
                             class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
                             wire:model='rankTrait' />
                     </div>
-                    <div class="col-span-3 row-start-3 flex flex-col">
+                    <div class="col-span-2 row-start-3 flex flex-col">
                         <label
                             class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
                             for="traitSpeed">Speed</label>
                         <input type="text" name="traitSpeed"
                             class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
                             wire:model='speedTrait' />
+                    </div>
+                    <div class="col-span-2 row-start-3 flex flex-col">
+                        <label
+                            class="text-white text-sm font-bold after:ml-0.5 mb-1 after:text-red-500 after:content-['*']"
+                            for="traitMemoryType">Memory Type</label>
+                        <input type="text" name="traitMemoryType"
+                            class="border-2 rounded-md border-accent p-2 focus:outline-none bg-primary/50 focus:ring focus:ring-accent"
+                            wire:model='memoryTypeTrait' />
                     </div>
                     <div class="col-span-2 row-start-4 flex flex-row items-center justify-start">
                         <input type="checkbox" name="traitEccSupport"

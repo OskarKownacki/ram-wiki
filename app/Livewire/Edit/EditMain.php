@@ -36,9 +36,11 @@ class EditMain extends Component
 
     public $modelServer;
 
-    public $autocompleteTraitsServer;
+    public $autocompleteTraitsServer = [];
 
     public $hardwareTraitsServer = '';
+
+    public $selectedTraits = [];
 
     public $nameTrait;
 
@@ -47,6 +49,8 @@ class EditMain extends Component
     public $bundleTrait;
 
     public $typeTrait;
+
+    public $memoryTypeTrait;
 
     public $speedTrait;
 
@@ -84,12 +88,13 @@ class EditMain extends Component
 
     public function updatedHardwareTraitRam($value)
     {
-        $this->autocompleteTraitRam = HardwareTrait::where('name', 'like', $value . '%')->take(5)->get();
+        $this->autocompleteTraitRam = HardwareTrait::where('name', 'like', $value . '%')->limit(5)->get();
     }
 
     public function updatedHardwareTraitsServer($value)
     {
-        $this->autocompleteTraitsServer = HardwareTrait::where('name', 'like', $value . '%')->take(5)->get();
+        $this->autocompleteTraitsServer = HardwareTrait::where('name', 'like', $value . '%')->limit(5)->get();
+        //dd($this->autocompleteTraitsServer);
     }
 
     public function boot(CsvImportInterface $csvImportInterface)
@@ -155,11 +160,74 @@ class EditMain extends Component
             $this->manufacturerServer = null;
             $this->modelServer = null;
 
-            $server->hardwareTraits()->attach(
+            $server->hardwareTraits()->syncWithoutDetaching(
                 HardwareTrait::where('name', '=', $this->hardwareTraitsServer)->first()-> id ?? null
             );
             $this->hardwareTraitsServer = null;
             Toaster::success('Dodano Serwer!');
+        }
+    }
+
+    public function addTrait($value)
+    {
+        $value = trim($value);
+
+        // Walidacja: czy nie jest puste i czy już nie istnieje w tablicy
+        if (!empty($value) && !in_array($value, $this->selectedTraits))
+        {
+            $this->selectedTraits[] = $value;
+        }
+
+        // Resetowanie pola wyszukiwania
+        $this->hardwareTraitsServer = '';
+    }
+
+    public function removeTrait($index)
+    {
+        unset($this->selectedTraits[$index]);
+        $this->selectedTraits = array_values($this->selectedTraits); // Reindeksacja tablicy
+    }
+
+    public function saveTrait()
+    {
+        $trait = new HardwareTrait();
+        $trait->name = $this->nameTrait;
+        $trait->capacity = $this->capacityTrait;
+        $trait->bundle = $this->bundleTrait;
+        $trait->type = $this->typeTrait;
+        $trait->speed = $this->speedTrait;
+        $trait->rank = $this->rankTrait;
+        $trait->voltage_v = $this->voltageTrait;
+        $trait->ecc_support = $this->eccSupportTrait;
+        $trait->ecc_registered = $this->eccRegisteredTrait;
+        $trait->frequency = $this->frequencyTrait;
+        $trait->cycle_latency = $this->cycleLatencyTrait;
+        $trait->bus = $this->portTrait;
+        $trait->module_build = $this->moduleBuildTrait;
+        $trait->module_ammount = $this->moduleAmmountTrait;
+        $trait->memory_type = $this->memoryTypeTrait;
+        $trait->guarancy = $this->guarancyTrait;
+
+        if ($trait->save())
+        {
+            $this->nameTrait = null;
+            $this->capacityTrait = null;
+            $this->bundleTrait = null;
+            $this->typeTrait = null;
+            $this->speedTrait = null;
+            $this->rankTrait = null;
+            $this->voltageTrait = null;
+            $this->eccSupportTrait = false;
+            $this->eccRegisteredTrait = false;
+            $this->frequencyTrait = null;
+            $this->cycleLatencyTrait = null;
+            $this->portTrait = null;
+            $this->moduleBuildTrait = null;
+            $this->moduleAmmountTrait = null;
+            $this->memoryTypeTrait = null;
+            $this->guarancyTrait = null;
+
+            Toaster::success('Dodano cechę RAMa!');
         }
     }
 }
