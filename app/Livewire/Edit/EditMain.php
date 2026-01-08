@@ -52,6 +52,8 @@ class EditMain extends Component
 
     public $memoryTypeTrait;
 
+    public $rules;
+
     public $speedTrait;
 
     public $rankTrait;
@@ -102,6 +104,78 @@ class EditMain extends Component
         $this->csvImportInterface = $csvImportInterface;
     }
 
+    public function prepareRules($tabId)
+    {
+        switch ($tabId)
+        {
+            case 1:
+                $fields = config('csv-import.fields.ram');
+
+                $map = [
+                    'manufacturer'      => 'manufacturer',
+                    'description'       => 'description',
+                    'product_code'      => 'producerCode',
+                    'hardware_trait_id' => 'hardwareTraitRam',
+                ];
+
+                foreach ($fields as $dbKey => $config)
+                {
+                    if (isset($map[$dbKey]))
+                    {
+                        $wireKey = $map[$dbKey];
+                        $this->rules[$wireKey] = $config["rules"];
+                    }
+                }
+                break;
+            case 2:
+                $fields = config('csv-import.fields.server');
+                $map = [
+                    'manufacturer'      => 'manufacturerServer',
+                    'model'             => 'modelServer',
+                    'hardware_trait_id' => 'hardwareTraitsServer',
+
+                ];
+                foreach ($fields as $dbKey => $config)
+                {
+                    if (isset($map[$dbKey]))
+                    {
+                        $wireKey = $map[$dbKey];
+                        $this->rules[$wireKey] = $config["rules"];
+                    }
+                }
+                break;
+            case 3:
+                $fields = config('csv-import.fields.trait');
+                $map = [
+                    'name'           => 'nameTrait',
+                    'capacity'       => 'capacityTrait',
+                    'bundle'         => 'bundleTrait',
+                    'type'           => 'typeTrait',
+                    'memory_type'    => 'memoryTypeTrait',
+                    'speed'          => 'speedTrait',
+                    'rank'           => 'rankTrait',
+                    'voltage_v'      => 'voltageTrait',
+                    'ecc_support'    => 'eccSupportTrait',
+                    'ecc_registered' => 'eccRegisteredTrait',
+                    'frequency'      => 'frequencyTrait',
+                    'cycle_latency'  => 'cycleLatencyTrait',
+                    'bus'            => 'portTrait',
+                    'module_build'   => 'moduleBuildTrait',
+                    'module_ammount' => 'moduleAmmountTrait',
+                    'guarancy'       => 'guarancyTrait',
+                ];
+                foreach ($fields as $dbKey => $config)
+                {
+                    if (isset($map[$dbKey]))
+                    {
+                        $wireKey = $map[$dbKey];
+                        $this->rules[$wireKey] = $config["rules"];
+                    }
+                }
+                break;
+        }
+    }
+
     public function uploadCsv()
     {
         $this->validate();
@@ -135,11 +209,13 @@ class EditMain extends Component
 
     public function saveRam()
     {
+        $this->prepareRules(1);
+        $this->validate($this->rules);
         $ram = new Ram();
         $ram->manufacturer = $this->manufacturer;
         $ram->description = $this->description;
         $ram->product_code = $this->producerCode;
-        $ram->hardware_trait_id = HardwareTrait::where('name', '=', $this->hardwareTraits)->first()-> id ?? null;
+        $ram->hardware_trait_id = HardwareTrait::where('name', '=', $this->hardwareTraitRam)->first()-> id ?? null;
         if ($ram->save())
         {
             $this->manufacturer = null;
@@ -152,6 +228,9 @@ class EditMain extends Component
 
     public function saveServer()
     {
+        $this->prepareRules(2);
+        $this->validate($this->rules);
+
         $server = new Server();
         $server->manufacturer = $this->manufacturerServer;
         $server->model = $this->modelServer;
@@ -159,9 +238,17 @@ class EditMain extends Component
         {
             $this->manufacturerServer = null;
             $this->modelServer = null;
-
+            $traitIds = [];
+            foreach ($this->selectedTraits as $traitName)
+            {
+                $traitId = HardwareTrait::where('name', '=', $traitName)->first()-> id ?? null;
+                if ($traitId)
+                {
+                    $traitIds[] = $traitId;
+                }
+            }
             $server->hardwareTraits()->syncWithoutDetaching(
-                HardwareTrait::where('name', '=', $this->hardwareTraitsServer)->first()-> id ?? null
+                $traitIds
             );
             $this->hardwareTraitsServer = null;
             Toaster::success('Dodano Serwer!');
@@ -190,6 +277,9 @@ class EditMain extends Component
 
     public function saveTrait()
     {
+        $this->prepareRules(3);
+        $this->validate($this->rules);
+
         $trait = new HardwareTrait();
         $trait->name = $this->nameTrait;
         $trait->capacity = $this->capacityTrait;

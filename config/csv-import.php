@@ -96,7 +96,7 @@ return [
         'server' => [
             'manufacturer' => [
                 'csv'   => 'PRODUCENT',
-                'rules' => 'string',
+                'rules' => 'string|nullable',
             ],
             'model' => [
                 'csv'   => 'MODEL',
