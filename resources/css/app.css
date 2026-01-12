@@ -1,8 +1,39 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-
+@source '../../vendor/masmerise/livewire-toaster/resources/views/*.blade.php';
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: "Roboto Condensed", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+    --color-primary: var(--color-sky-950);
+    --color-secondary: var(--color-sky-600);
+    --color-accent: var(--color-sky-400);
+    --color-footer: var(--color-sky-900);
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+body {
+    @apply bg-cover bg-center; /* Tailwind utilities */
+    background-image: url("/public/images/bg-main.svg") !important;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* opcjonalnie */
+}
+
+.bg-editor {
+    background-image: url("/public/images/bg-editor.svg") !important;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
