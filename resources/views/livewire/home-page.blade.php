@@ -7,7 +7,7 @@
             <datalist id="autocompleteList">
                 @if (isset($autocompleteValues))
                     @foreach ($autocompleteValues as $autocompleteValue)
-                        <option value={{ $autocompleteValue->product_code }}> </option>
+                        <option value="{{ $autocompleteValue->product_code }}"> </option>
                     @endforeach
                 @endif
             </datalist>
