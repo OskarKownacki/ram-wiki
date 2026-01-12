@@ -9,46 +9,59 @@ use Spatie\SimpleExcel\SimpleExcelReader;
 
 class CsvImportService implements CsvImportInterface
 {
-    public array $rules;
-
-    public array $optionalFields;
-
-    public string $uniqueIndex;
-
-    public function importCsvFile(string $filePath, array $fields, string $modelName): void
+    public function importCsvFile(string $filePath, int $tabId): void
     {
+        $config = match ($tabId)
+        {
+            1       => ['fields' => config('csv-import.fields.ram'), 'type' => 'Ram'],
+            2       => ['fields' => config('csv-import.fields.server'), 'type' => 'Server'],
+            3       => ['fields' => config('csv-import.fields.trait'), 'type' => 'hardwareTrait'],
+            default => throw new \Exception("Invalid Tab ID"),
+        };
+
+        $metadata = $this->prepareFieldsMetadata($config['fields']);
+
         SimpleExcelReader::create($filePath)
                 ->getRows()
                 ->chunk(200)
-                ->each(function ($chunk) use ($fields, $modelName)
+                ->each(function ($chunk) use ($config, $metadata)
                 {
+                    $fields = $config['fields'];
+                    $modelName = $config['type'];
+
                     $batchData = [];
-                    $this->prepareFieldsMetadata($fields);
+
                     foreach ($chunk as $row)
                     {
                         $batchData[] = $this->map($row, $fields);
                     }
-                    ProcessCsvImport::dispatch($batchData, $this->rules, $this->optionalFields, $this->uniqueIndex, $modelName)->onQueue('csv_imports');
+                    ProcessCsvImport::dispatch($batchData, $metadata['rules'], $metadata['optionalFields'], $metadata['uniqueIndex'], $modelName)->onQueue('csv_imports');
                 });
     }
 
     public function prepareFieldsMetadata(array $fields)
     {
-        $this->rules = [];
-        $this->optionalFields = [];
-        $this->uniqueIndex = '';
+        $rules = [];
+        $optionalFields = [];
+        $uniqueIndex = '';
         foreach ($fields as $dbKey => $config)
         {
             if (!str_contains($config["rules"], 'required'))
             {
-                $this->optionalFields[] = $dbKey;
+                $optionalFields[] = $dbKey;
             }
             if (isset($config["info"]["uniqueIndex"]) && $config["info"]["uniqueIndex"] === true)
             {
-                $this->uniqueIndex = $dbKey;
+                $uniqueIndex = $dbKey;
             }
-            $this->rules[$dbKey] = $config["rules"];
+            $rules[$dbKey] = $config["rules"];
         }
+
+        return [
+            'rules'          => $rules,
+            'optionalFields' => $optionalFields,
+            'uniqueIndex'    => $uniqueIndex,
+        ];
     }
 
     public function map(array $row, array $fields)
