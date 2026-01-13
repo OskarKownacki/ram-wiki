@@ -1,8 +1,9 @@
-# 1. Zmieniamy bazę na PHP 8.3 (wymagane przez spatie/simple-excel)
 FROM php:8.3-apache
 
-# 2. Instalacja zależności systemowych (dodano libzip-dev dla rozszerzenia zip)
+# Instalacja zależności systemowych
+# libpq-dev jest niezbędny do skompilowania rozszerzenia pdo_pgsql
 RUN apt-get update && apt-get install -y \
+    libpq-dev \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
@@ -10,7 +11,9 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
-    curl
+    curl \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd zip sockets
 
 # 3. Instalacja rozszerzeń PHP (dodano zip oraz sockets)
 RUN docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd zip sockets
