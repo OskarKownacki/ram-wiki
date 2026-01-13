@@ -15,10 +15,8 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd zip sockets
-
-# 3. Instalacja rozszerzeń PHP (dodano zip oraz sockets)
-RUN docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd zip sockets
+    && docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd zip sockets \
+    && rm -rf /var/lib/apt/lists/*
 
 # 4. Włączenie mod_rewrite dla Apache (standard w Laravelu)
 RUN a2enmod rewrite
@@ -26,19 +24,19 @@ RUN a2enmod rewrite
 # 5. Kopiowanie plików projektu
 COPY . /var/www/html
 
+# 5a. Instalacja Composera PRZED budowaniem Vite
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN composer install --no-dev --no-interaction --optimize-autoloader
+
 # 5b. Instalacja Node.js dependencies i budowanie Vite assets
-RUN npm install --prefix /var/www/html && npm run build --prefix /var/www/html
+RUN npm ci --prefix /var/www/html && npm run build --prefix /var/www/html && rm -rf /var/www/html/node_modules
 
 # 6. Ustawienie folderu public jako głównego
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# 7. Instalacja Composera
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --no-interaction --optimize-autoloader
-
-# 8. Uprawnienia dla folderów zapisu
+# 7. Uprawnienia dla folderów zapisu
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 80
