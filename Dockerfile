@@ -46,11 +46,17 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 80
 
 RUN echo "#!/bin/bash\n\
-    # Naprawa uprawnień 'w locie' tuż przed startem\n\
     chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache\n\
     chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache\n\
     \n\
     php artisan migrate --force\n\
+    \n\
+    # URUCHOMIENIE WORKERA W TLE\n\
+    # --queue=csv_imports określa konkretną kolejkę\n\
+    # --sleep=3 oszczędza procesor na darmowym planie\n\
+    # --tries=3 ponawia próby w razie błędu\n\
+    php artisan queue:work --queue=csv_imports --sleep=3 --tries=3 & \n\
+    \n\
     apache2-foreground" > /usr/local/bin/start-app.sh && chmod +x /usr/local/bin/start-app.sh
 
 # Ustawiamy nasz skrypt jako punkt startowy
