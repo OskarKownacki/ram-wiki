@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 # Instalacja zależności systemowych
 # libpq-dev jest niezbędny do skompilowania rozszerzenia pdo_pgsql
@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
+    nodejs \
+    npm \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd zip sockets
 
@@ -23,6 +25,9 @@ RUN a2enmod rewrite
 
 # 5. Kopiowanie plików projektu
 COPY . /var/www/html
+
+# 5b. Instalacja Node.js dependencies i budowanie Vite assets
+RUN npm install --prefix /var/www/html && npm run build --prefix /var/www/html
 
 # 6. Ustawienie folderu public jako głównego
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
