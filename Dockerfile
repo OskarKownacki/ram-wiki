@@ -50,8 +50,6 @@ RUN echo "#!/bin/bash\n\
     chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache\n\
     chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache\n\
     \n\
-    npm run build --prefix /var/www/html\n\
-    \n\
     php artisan migrate --force\n\
     apache2-foreground" > /usr/local/bin/start-app.sh && chmod +x /usr/local/bin/start-app.sh
 
