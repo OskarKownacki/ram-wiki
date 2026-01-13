@@ -24,12 +24,16 @@ RUN a2enmod rewrite
 # 5. Kopiowanie plików projektu
 COPY . /var/www/html
 
+# 5a. Ustawienie zmiennych środowiskowych dla produkcji
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+
 # 5a. Instalacja Composera PRZED budowaniem Vite
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --no-interaction --optimize-autoloader
 
 # 5b. Instalacja Node.js dependencies i budowanie Vite assets
-RUN npm ci --prefix /var/www/html && npm run build --prefix /var/www/html && rm -rf /var/www/html/node_modules
+RUN npm ci --prefix /var/www/html && npm run build --prefix /var/www/html
 
 # 6. Ustawienie folderu public jako głównego
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -45,6 +49,8 @@ RUN echo "#!/bin/bash\n\
     # Naprawa uprawnień 'w locie' tuż przed startem\n\
     chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache\n\
     chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache\n\
+    \n\
+    npm run build --prefix /var/www/html\n\
     \n\
     php artisan migrate --force\n\
     apache2-foreground" > /usr/local/bin/start-app.sh && chmod +x /usr/local/bin/start-app.sh
