@@ -1,31 +1,36 @@
-FROM php:8.2-apache
+# 1. Zmieniamy bazę na PHP 8.3 (wymagane przez spatie/simple-excel)
+FROM php:8.3-apache
 
-# Instalacja rozszerzeń PHP i zależności
+# 2. Instalacja zależności systemowych (dodano libzip-dev dla rozszerzenia zip)
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
-    unzip
+    unzip \
+    git \
+    curl
 
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+# 3. Instalacja rozszerzeń PHP (dodano zip oraz sockets)
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip sockets
 
-# Włączenie mod_rewrite dla Laravela
+# 4. Włączenie mod_rewrite dla Apache (standard w Laravelu)
 RUN a2enmod rewrite
 
-# Kopiowanie plików projektu
+# 5. Kopiowanie plików projektu
 COPY . /var/www/html
 
-# Ustawienie folderu public jako głównego
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+# 6. Ustawienie folderu public jako głównego
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Instalacja Composera
+# 7. Instalacja Composera
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --no-interaction --optimize-autoloader
 
-# Uprawnienia
+# 8. Uprawnienia dla folderów zapisu
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 80
