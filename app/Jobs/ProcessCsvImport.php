@@ -88,6 +88,9 @@ class ProcessCsvImport implements ShouldQueue
                 $this->fieldsToUpdate = array_keys($valid);
             }
         }
+
+        $validatedData = collect($validatedData)->unique($this->uniqueIndex)->values()->all();
+
         switch ($this->modelName)
         {
             case 'hardwareTrait':
