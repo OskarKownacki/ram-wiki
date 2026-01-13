@@ -1,1 +1,1 @@
-import "@masmerise/livewire-toaster";
+import "../../vendor/masmerise/livewire-toaster/resources/js";
