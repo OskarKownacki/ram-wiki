@@ -39,10 +39,11 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 80
 
 RUN echo "#!/bin/bash\n\
-    # Czekamy chwilę na połączenie z bazą i odpalamy migracje\n\
-    php artisan migrate --force\n\
+    # Naprawa uprawnień 'w locie' tuż przed startem\n\
+    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache\n\
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache\n\
     \n\
-    # Uruchamiamy Apache w trybie pierwszoplanowym\n\
+    php artisan migrate --force\n\
     apache2-foreground" > /usr/local/bin/start-app.sh && chmod +x /usr/local/bin/start-app.sh
 
 # Ustawiamy nasz skrypt jako punkt startowy
