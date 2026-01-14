@@ -40,7 +40,6 @@ class ProcessCsvImport implements ShouldQueue
     {
         $validatedData = [];
         $mtmMap = [];
-        dd($this->data);
         foreach ($this->data as $data)
         {
             try
