@@ -70,6 +70,17 @@ class ProcessCsvImport implements ShouldQueue
             }
 
             $valid = $validator->validated();
+
+            // Convert integer values to boolean for PostgreSQL compatibility
+            if (isset($valid['ecc_support']))
+            {
+                $valid['ecc_support'] = (bool) $valid['ecc_support'];
+            }
+            if (isset($valid['ecc_registered']))
+            {
+                $valid['ecc_registered'] = (bool) $valid['ecc_registered'];
+            }
+
             $validatedData[] = $valid;
 
 
