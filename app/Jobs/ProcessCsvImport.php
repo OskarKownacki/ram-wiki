@@ -40,6 +40,7 @@ class ProcessCsvImport implements ShouldQueue
     {
         $validatedData = [];
         $mtmMap = [];
+        dd($this->data);
         foreach ($this->data as $data)
         {
             try
@@ -49,7 +50,7 @@ class ProcessCsvImport implements ShouldQueue
             }
             catch (ValidationException $e)
             {
-                Log::error('CSV import vaildation failed for traits on trait:' . $this->data['name'] . ' with errors: '  . json_encode($validator->errors()->all()));
+                Log::error('CSV import vaildation failed for traits on trait:' . $data["name"] . ' with errors: '  . json_encode($validator->errors()->all()));
                 foreach ($validator->errors()->all() as $error)
                 {
                     if (str_contains($error, 'required'))
@@ -62,7 +63,7 @@ class ProcessCsvImport implements ShouldQueue
                     if ($validator->errors()->has($field))
                     {
                         $data[$field] = null;
-                        Log::error('The field that didnt pass validation wasnt essential. It will be nulled, make sure to investigate the issue. Trait name: ' . $this->data["name"]);
+                        Log::error('The field that didnt pass validation wasnt essential. It will be nulled, make sure to investigate the issue. Trait name: ' . $data["name"]);
                     }
                 }
                 $validator = Validator::make($data, $this->rules);
