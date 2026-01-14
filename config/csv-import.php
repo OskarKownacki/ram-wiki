@@ -34,39 +34,39 @@ return [
             ],
             'capacity' => [
                 'csv'   => 'Pojemność całkowita',
-                'rules' => 'required|string',
+                'rules' => 'string',
             ],
             'bundle' => [
                 'csv'   => 'Zestaw',
-                'rules' => 'required|string',
+                'rules' => 'string',
             ],
             'type' => [
                 'csv'   => 'Typ',
-                'rules' => 'required|string',
+                'rules' => 'string',
             ],
             'rank' => [
                 'csv'   => 'Rank',
-                'rules' => 'required|string',
+                'rules' => 'string',
             ],
             'memory_type' => [
                 'csv'   => 'Rodzaj pamięci',
-                'rules' => 'required|string',
+                'rules' => 'string',
             ],
             'ecc_support' => [
                 'csv'   => 'Obsługa ECC',
-                'rules' => 'required|boolean',
+                'rules' => 'integer',
             ],
             'ecc_registered' => [
                 'csv'   => 'Rejestrowanie (ECC Registered)',
-                'rules' => 'boolean',
+                'rules' => 'integer',
             ],
             'speed' => [
                 'csv'   => 'Szybkość modułu',
-                'rules' => 'required|string',
+                'rules' => 'string',
             ],
             'frequency' => [
                 'csv'   => 'Częstotliwość',
-                'rules' => 'required|string',
+                'rules' => 'string',
             ],
             'cycle_latency' => [
                 'csv'   => 'Opóźnienie (Cycle Latency)',
@@ -100,14 +100,14 @@ return [
             ],
             'model' => [
                 'csv'   => 'MODEL',
-                'rules' => 'required|string',
+                'rules' => 'string',
                 'info'  => ['uniqueIndex' => true],
             ],
             'hardware_trait_id' => [
                 'csv'   => 'CECHA',
                 'rules' => 'nullable',
                 'info'  => ['MtM' => 'hardware_trait_server',
-                    'delimeter'   => ','],
+                    'delimeter'   => ',', ],
             ],
         ],
     ],
