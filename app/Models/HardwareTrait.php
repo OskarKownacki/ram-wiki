@@ -27,6 +27,14 @@ class HardwareTrait extends Model
         'manufacturer',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'ecc_support'    => 'boolean',
+            'ecc_registered' => 'boolean',
+        ];
+    }
+
     public function rams()
     {
         return $this->hasMany(Ram::class, 'hardware_trait_id', 'id');
