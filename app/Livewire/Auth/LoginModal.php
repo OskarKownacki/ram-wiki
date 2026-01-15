@@ -26,6 +26,7 @@ class LoginModal extends Component {
         $validated = $this->validate();
 
         if (Auth::attempt($validated)) {
+            request()->session()->regenerate();
             $this->redirect(config('fortify.home'), navigate: true);
         }
         else {

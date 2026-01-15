@@ -17,7 +17,7 @@
 
 <body class="bg-primary min-h-screen flex flex-col">
     <header class="mx-[15%]">
-        <nav class="grid grid-cols-12 gap2 p-4">
+        <nav class="grid grid-cols-12 gap-2 p-4">
             <a href="/" class="col-span-3 text-2xl text-center flex items-center">Ram wiki Esus IT</a>
             @if (Auth::check() && Auth::user()->is_admin)
                 <a href="edit"

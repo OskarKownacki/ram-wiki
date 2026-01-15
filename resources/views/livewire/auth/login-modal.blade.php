@@ -1,6 +1,5 @@
 <div>
-    <button class="bg-secondary text-white text-center rounded-md p-2 m-1 w-full" wire:click="openModal"
-        wire:navigate>Login</button>
+    <button class="bg-secondary text-white text-center rounded-md p-2 m-1 w-full" wire:click="openModal">Login</button>
 
 
     @if ($isOpen)

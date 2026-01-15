@@ -12,6 +12,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 class User extends Authenticatable {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
+
     use Notifiable;
     use TwoFactorAuthenticatable;
 
@@ -24,7 +25,6 @@ class User extends Authenticatable {
         'name',
         'email',
         'password',
-        'is_admin',
     ];
 
     /**

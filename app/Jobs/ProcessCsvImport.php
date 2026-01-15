@@ -40,29 +40,21 @@ class ProcessCsvImport implements ShouldQueue
     {
         $validatedData = [];
         $mtmMap = [];
-        foreach ($this->data as $data)
-        {
-            try
-            {
+        foreach ($this->data as $data) {
+            try {
                 $validator = Validator::make($data, $this->rules);
                 $validator->validate();
-            }
-            catch (ValidationException $e)
-            {
-                Log::error('CSV import vaildation failed for traits on trait:' . $data["name"] . ' with errors: '  . json_encode($validator->errors()->all()));
-                foreach ($validator->errors()->all() as $error)
-                {
-                    if (str_contains($error, 'required'))
-                    {
+            } catch (ValidationException $e) {
+                Log::error('CSV import vaildation failed for traits on trait:'.$data['name'].' with errors: '.json_encode($validator->errors()->all()));
+                foreach ($validator->errors()->all() as $error) {
+                    if (str_contains($error, 'required')) {
                         throw $e;
                     }
                 }
-                foreach ($this->optionalFields as $field)
-                {
-                    if ($validator->errors()->has($field))
-                    {
+                foreach ($this->optionalFields as $field) {
+                    if ($validator->errors()->has($field)) {
                         $data[$field] = null;
-                        Log::error('The field that didnt pass validation wasnt essential. It will be nulled, make sure to investigate the issue. Trait name: ' . $data["name"]);
+                        Log::error('The field that didnt pass validation wasnt essential. It will be nulled, make sure to investigate the issue. Trait name: '.$data['name']);
                     }
                 }
                 $validator = Validator::make($data, $this->rules);
@@ -73,26 +65,21 @@ class ProcessCsvImport implements ShouldQueue
 
             $validatedData[] = $valid;
 
-
-            if ($this->modelName === 'Server' && !empty($data['MtMValue']))
-            {
+            if ($this->modelName === 'Server' && ! empty($data['MtMValue'])) {
                 $uniqueKeyValue = $valid[$this->uniqueIndex];
                 $mtmMap[$uniqueKeyValue] = [
-                    'values'    => $data['MtMValue'],
+                    'values' => $data['MtMValue'],
                     'delimiter' => $data['MtMDelimeter'] ?? ',',
                 ];
             }
 
-
-            if (empty($this->fieldsToUpdate))
-            {
+            if (empty($this->fieldsToUpdate)) {
                 $this->fieldsToUpdate = array_keys($valid);
             }
         }
 
         $validatedData = collect($validatedData)->unique($this->uniqueIndex)->values()->all();
-        switch ($this->modelName)
-        {
+        switch ($this->modelName) {
             case 'hardwareTrait':
                 HardwareTrait::upsert($validatedData, uniqueBy: [$this->uniqueIndex], update: $this->fieldsToUpdate);
                 break;
@@ -101,11 +88,9 @@ class ProcessCsvImport implements ShouldQueue
                 break;
             case 'Server':
 
-
                 Server::upsert($validatedData, uniqueBy: [$this->uniqueIndex], update: $this->fieldsToUpdate);
 
-                if (!empty($mtmMap))
-                {
+                if (! empty($mtmMap)) {
                     $this->processServerRelations($mtmMap);
                 }
                 break;
@@ -115,13 +100,11 @@ class ProcessCsvImport implements ShouldQueue
     private function processServerRelations(array $mtmMap): void
     {
         $servers = Server::whereIn($this->uniqueIndex, array_keys($mtmMap))->get();
-        foreach ($servers as $server)
-        {
+        foreach ($servers as $server) {
             $relationData = $mtmMap[$server->{$this->uniqueIndex}];
             $traitNames = array_map('trim', explode($relationData['delimiter'], $relationData['values']));
             $traitIds = HardwareTrait::whereIn('name', $traitNames)->pluck('id')->toArray();
-            if (!empty($traitIds))
-            {
+            if (! empty($traitIds)) {
                 $server->hardwareTraits()->syncWithoutDetaching(
                     $traitIds
                 );

@@ -20,7 +20,7 @@ class RegisterModal extends Component {
     #[Validate('required|string|min:8|confirmed')]
     public $password = '';
 
-    #[Validate('required|string|same:password')]
+    #[Validate('string|same:password')]
     public $password_confirmation = '';
 
     public function mount() {
@@ -38,7 +38,11 @@ class RegisterModal extends Component {
             'email'    => $this->email,
             'password' => $this->password,
         ]);
-
+        if (!Auth::check()) {
+            $this->addError('email', 'Nie udało się zalogować nowego użytkownika.');
+            return;
+        }
+        request()->session()->regenerate();
         $this->redirect(config('fortify.home'), navigate: true);
     }
 
@@ -47,6 +51,6 @@ class RegisterModal extends Component {
     }
 
     public function openModal() {
-        return $this->redirect(route('login'));
+        return $this->redirect(route('register'));
     }
 }
