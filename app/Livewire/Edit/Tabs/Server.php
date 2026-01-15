@@ -39,8 +39,7 @@ class Server extends Component
     {
         $value = trim($value);
 
-        if (!empty($value) && !in_array($value, $this->selectedTraits))
-        {
+        if (! empty($value) && ! in_array($value, $this->selectedTraits)) {
             $this->selectedTraits[] = $value;
         }
 
@@ -58,19 +57,16 @@ class Server extends Component
         $this->prepareRules(2);
         $this->validate($this->formRules);
 
-        $server = new ModelsServer();
+        $server = new ModelsServer;
         $server->manufacturer = $this->manufacturerServer;
         $server->model = $this->modelServer;
-        if ($server->save())
-        {
+        if ($server->save()) {
             $this->manufacturerServer = null;
             $this->modelServer = null;
             $traitIds = [];
-            foreach ($this->selectedTraits as $traitName)
-            {
-                $traitId = HardwareTrait::where('name', '=', $traitName)->first()-> id ?? null;
-                if ($traitId)
-                {
+            foreach ($this->selectedTraits as $traitName) {
+                $traitId = HardwareTrait::where('name', '=', $traitName)->first()->id ?? null;
+                if ($traitId) {
                     $traitIds[] = $traitId;
                 }
             }
@@ -84,25 +80,23 @@ class Server extends Component
 
     public function updatedHardwareTraitsServer($value)
     {
-        $this->autocompleteTraitsServer = HardwareTrait::where('name', 'like', $value . '%')->limit(5)->get();
-        //dd($this->autocompleteTraitsServer);
+        $this->autocompleteTraitsServer = HardwareTrait::where('name', 'like', $value.'%')->limit(5)->get();
+        // dd($this->autocompleteTraitsServer);
     }
 
     public function prepareRules()
     {
         $fields = config('csv-import.fields.server');
         $map = [
-            'manufacturer'      => 'manufacturerServer',
-            'model'             => 'modelServer',
+            'manufacturer' => 'manufacturerServer',
+            'model' => 'modelServer',
             'hardware_trait_id' => 'hardwareTraitsServer',
 
         ];
-        foreach ($fields as $dbKey => $config)
-        {
-            if (isset($map[$dbKey]))
-            {
+        foreach ($fields as $dbKey => $config) {
+            if (isset($map[$dbKey])) {
                 $wireKey = $map[$dbKey];
-                $this->formRules[$wireKey] = $config["rules"];
+                $this->formRules[$wireKey] = $config['rules'];
             }
         }
     }
@@ -118,7 +112,7 @@ class Server extends Component
 
         $name = $this->csvFile->getClientOriginalName();
         $this->csvFile->storeAs(path: 'imports', name: $name);
-        $path = storage_path('app/private/imports/' . $name);
+        $path = storage_path('app/private/imports/'.$name);
         $this->csvImportInterface->importCsvFile($path, 2);
     }
 }

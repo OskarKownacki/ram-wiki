@@ -62,7 +62,7 @@ class HardwareTrait extends Component
         $this->prepareRules(3);
         $this->validate($this->formRules);
 
-        $trait = new ModelsHardwareTrait();
+        $trait = new ModelsHardwareTrait;
         $trait->name = $this->nameTrait;
         $trait->capacity = $this->capacityTrait;
         $trait->bundle = $this->bundleTrait;
@@ -80,8 +80,7 @@ class HardwareTrait extends Component
         $trait->memory_type = $this->memoryTypeTrait;
         $trait->guarancy = $this->guarancyTrait;
 
-        if ($trait->save())
-        {
+        if ($trait->save()) {
             $this->nameTrait = null;
             $this->capacityTrait = null;
             $this->bundleTrait = null;
@@ -107,29 +106,27 @@ class HardwareTrait extends Component
     {
         $fields = config('csv-import.fields.trait');
         $map = [
-            'name'           => 'nameTrait',
-            'capacity'       => 'capacityTrait',
-            'bundle'         => 'bundleTrait',
-            'type'           => 'typeTrait',
-            'memory_type'    => 'memoryTypeTrait',
-            'speed'          => 'speedTrait',
-            'rank'           => 'rankTrait',
-            'voltage_v'      => 'voltageTrait',
-            'ecc_support'    => 'eccSupportTrait',
+            'name' => 'nameTrait',
+            'capacity' => 'capacityTrait',
+            'bundle' => 'bundleTrait',
+            'type' => 'typeTrait',
+            'memory_type' => 'memoryTypeTrait',
+            'speed' => 'speedTrait',
+            'rank' => 'rankTrait',
+            'voltage_v' => 'voltageTrait',
+            'ecc_support' => 'eccSupportTrait',
             'ecc_registered' => 'eccRegisteredTrait',
-            'frequency'      => 'frequencyTrait',
-            'cycle_latency'  => 'cycleLatencyTrait',
-            'bus'            => 'portTrait',
-            'module_build'   => 'moduleBuildTrait',
+            'frequency' => 'frequencyTrait',
+            'cycle_latency' => 'cycleLatencyTrait',
+            'bus' => 'portTrait',
+            'module_build' => 'moduleBuildTrait',
             'module_ammount' => 'moduleAmmountTrait',
-            'guarancy'       => 'guarancyTrait',
+            'guarancy' => 'guarancyTrait',
         ];
-        foreach ($fields as $dbKey => $config)
-        {
-            if (isset($map[$dbKey]))
-            {
+        foreach ($fields as $dbKey => $config) {
+            if (isset($map[$dbKey])) {
                 $wireKey = $map[$dbKey];
-                $this->formRules[$wireKey] = $config["rules"];
+                $this->formRules[$wireKey] = $config['rules'];
             }
         }
     }
@@ -145,7 +142,7 @@ class HardwareTrait extends Component
 
         $name = $this->csvFile->getClientOriginalName();
         $this->csvFile->storeAs(path: 'imports', name: $name);
-        $path = storage_path('app/private/imports/' . $name);
+        $path = storage_path('app/private/imports/'.$name);
         $this->csvImportInterface->importCsvFile($path, 3);
     }
 }
