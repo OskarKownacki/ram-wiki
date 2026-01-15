@@ -5,15 +5,16 @@ namespace App\Jobs;
 use App\Models\HardwareTrait;
 use App\Models\Ram;
 use App\Models\Server;
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class ProcessCsvImport implements ShouldQueue
-{
+class ProcessCsvImport implements ShouldQueue {
     use Queueable;
+    use Batchable;
 
     public array $data;
 
@@ -27,8 +28,7 @@ class ProcessCsvImport implements ShouldQueue
 
     public $fieldsToUpdate;
 
-    public function __construct(array $data, array $rules, array $optionalFields, string $uniqueIndex, string $modelName)
-    {
+    public function __construct(array $data, array $rules, array $optionalFields, string $uniqueIndex, string $modelName) {
         $this->data = $data;
         $this->rules = $rules;
         $this->optionalFields = $optionalFields;
@@ -36,15 +36,15 @@ class ProcessCsvImport implements ShouldQueue
         $this->modelName = $modelName;
     }
 
-    public function handle(): void
-    {
+    public function handle(): void {
         $validatedData = [];
         $mtmMap = [];
         foreach ($this->data as $data) {
             try {
                 $validator = Validator::make($data, $this->rules);
                 $validator->validate();
-            } catch (ValidationException $e) {
+            }
+            catch (ValidationException $e) {
                 Log::error('CSV import vaildation failed for traits on trait:'.$data['name'].' with errors: '.json_encode($validator->errors()->all()));
                 foreach ($validator->errors()->all() as $error) {
                     if (str_contains($error, 'required')) {
@@ -68,7 +68,7 @@ class ProcessCsvImport implements ShouldQueue
             if ($this->modelName === 'Server' && ! empty($data['MtMValue'])) {
                 $uniqueKeyValue = $valid[$this->uniqueIndex];
                 $mtmMap[$uniqueKeyValue] = [
-                    'values' => $data['MtMValue'],
+                    'values'    => $data['MtMValue'],
                     'delimiter' => $data['MtMDelimeter'] ?? ',',
                 ];
             }
@@ -97,8 +97,7 @@ class ProcessCsvImport implements ShouldQueue
         }
     }
 
-    private function processServerRelations(array $mtmMap): void
-    {
+    private function processServerRelations(array $mtmMap): void {
         $servers = Server::whereIn($this->uniqueIndex, array_keys($mtmMap))->get();
         foreach ($servers as $server) {
             $relationData = $mtmMap[$server->{$this->uniqueIndex}];

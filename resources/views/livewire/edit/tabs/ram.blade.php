@@ -1,16 +1,22 @@
 <div>
     <form wire:submit="uploadCsv" class="grid grid-cols-12 gap-4 col-span-12 p-4">
         <label for="csv_file"
-            class="col-span-2 col-start-1 bg-green-700 hover:bg-green-600 rounded-md p-2 flex items-center justify-between cursor-pointer">
+            class="col-span-2 col-start-1 bg-green-700 hover:brightness-110 transition rounded-md p-2 flex items-center justify-between cursor-pointer">
             CSV Import
             @svg('heroicon-o-table-cells', ['class' => 'w-6 h-6 text-white'])
         </label>
         <input type="file" id="csv_file" name="csv_file" class="hidden" wire:model="csvFile" accept=".csv" />
 
-        @if ($csvFile)
+        @if ($csvFile && !$importInProgress)
             <button type="submit"
-                class="col-span-2 col-start-3 bg-accent hover:bg-secondary rounded-md p-2 flex items-center justify-between">Import
+                class="col-span-2 col-start-3 bg-accent rounded-md p-2 flex items-center justify-between cursor-pointer hover:opacity-90 transition-opacity">Import
                 @svg('heroicon-o-arrow-up-on-square', ['class' => 'w-6 h-6', 'style' => 'color: #fff'])</button>
+        @elseif($importInProgress)
+            <div wire:poll.2s="checkProgress"
+                class="col-span-2 col-start-3 bg-accent rounded-md p-2 flex items-center justify-between cursor-pointer hover:opacity-90 transition-opacity text-white">
+                Import in progress...
+                @svg('heroicon-o-arrow-path', ['class' => 'w-6 h-6 animate-spin', 'style' => 'color: #fff'])
+            </div>
         @endif
     </form>
     <form class="grid grid-cols-12 gap-4 p-4 grid-rows-6" id="ram-form" wire:submit="saveRam" data-tab="1">
@@ -67,7 +73,8 @@
             </div>
         </div>
         <div class="col-span-6  row-start-6 flex items-center row-span-1 ">
-            <button class="bg-accent h-12 hover:bg-secondary w-full rounded-md" type="submit">
+            <button class="bg-accent h-12 hover:opacity-90 cursor-pointer transition-opacity w-full rounded-md"
+                type="submit">
                 Submit
             </button>
         </div>

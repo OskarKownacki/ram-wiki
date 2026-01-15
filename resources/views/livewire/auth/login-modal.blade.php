@@ -1,5 +1,7 @@
 <div>
-    <button class="bg-secondary text-white text-center rounded-md p-2 m-1 w-full" wire:click="openModal">Login</button>
+    <button
+        class="bg-secondary text-white text-center rounded-md p-2 m-1 w-full cursor-pointer hover:opacity-90 transition-opacity"
+        wire:click="openModal">Login</button>
 
 
     @if ($isOpen)
@@ -30,8 +32,9 @@
 
                     <div class="flex justify-end gap-2">
                         <button type="button" wire:click="$set('isOpen', false)"
-                            class="px-4 py-2 text-white">Anuluj</button>
-                        <button type="submit" class="bg-secondary text-white px-4 py-2 rounded">Zaloguj</button>
+                            class="px-4 py-2 text-white hover:opacity-90 cursor-pointer transition-opacity">Anuluj</button>
+                        <button type="submit"
+                            class="bg-secondary hover:opacity-90 cursor-pointer transition-opacity text-white px-4 py-2 rounded">Zaloguj</button>
                     </div>
                 </form>
             </div>
