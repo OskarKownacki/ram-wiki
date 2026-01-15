@@ -66,12 +66,43 @@ class CsvImportService implements CsvImportInterface
 
     public function map(array $row, array $fields)
     {
+        $data = [];
+
         foreach ($fields as $dbKey => $config)
         {
-            if (str_contains($config["rules"], 'bool'))
+            $value = $row[$config["csv"]] ?? null;
+
+            // Handle boolean fields - check for both 'bool' and 'boolean'
+            if ($config["csv"] === 'Obsługa ECC' || $config["csv"] === 'Rejestrowanie (ECC Registered)')
             {
-                $row[$config["csv"]] = (strtolower($row[$config["csv"]]) === 'tak') ? true : false;
+                $value = (strtolower($value ?? '') === 'tak') ? 1 : 0;
             }
+
+            // Handle voltage field - convert "1.35V" to 1.35
+            if ($dbKey === 'voltage_v')
+            {
+                if ($value === null || $value === '')
+                {
+                    $value = null;
+                }
+                else
+                {
+                    $value = str_replace(',', '.', $value);
+                    $value = preg_replace('/[^0-9.]/', '', $value);
+
+                    // Validate voltage is in reasonable range (0.5V - 5.0V)
+                    if ($value !== '' && is_numeric($value))
+                    {
+                        $floatValue = (float) $value;
+                        $value = ($floatValue >= 0.5 && $floatValue <= 5.0) ? $floatValue : null;
+                    }
+                    else
+                    {
+                        $value = null;
+                    }
+                }
+            }
+
             if (isset($config["info"]))
             {
                 if (isset($config["info"]["relationship"]))
@@ -79,12 +110,12 @@ class CsvImportService implements CsvImportInterface
                     $relatedTableName = $config["info"]["relationship"];
                     $foreignKey = $config["info"]["foreignKey"] ?? null;
 
-                    $row[$config["csv"]] = DB::table($relatedTableName)->where($foreignKey, $row[$config["csv"]])->first()->id ?? null;
+                    $value = DB::table($relatedTableName)->where($foreignKey, $value)->first()->id ?? null;
                 }
                 if (isset($config["info"]["MtM"]))
                 {
                     $data['MtMInfo'] = $config["info"]["MtM"];
-                    $data['MtMValue'] = $row[$config["csv"]];
+                    $data['MtMValue'] = $value;
                     continue;
                 }
                 if (isset($config["info"]["delimeter"]))
@@ -93,7 +124,7 @@ class CsvImportService implements CsvImportInterface
                 }
             }
 
-            $data[$dbKey] = $row[$config["csv"]] ?? null;
+            $data[$dbKey] = $value;
         }
         return $data;
     }
