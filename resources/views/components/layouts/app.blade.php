@@ -32,7 +32,7 @@
             @auth
                 <div class="col-start-10 col-span-3 flex justify-end items-center gap-4">
                     <span class="text-white w-full">Witaj, {{ Auth::user()->name }}</span>
-                    <form method="POST" class="w-full"action="{{ route('logout') }}">
+                    <form method="POST" class="w-full" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
                             class="bg-secondary w-full text-white rounded-md p-2 m-1 cursor-pointer hover:opacity-90 transition-opacity">Logout</button>

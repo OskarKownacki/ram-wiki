@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class ProcessCsvImport implements ShouldQueue {
-    use Queueable;
     use Batchable;
+    use Queueable;
 
     public array $data;
 
@@ -43,8 +43,7 @@ class ProcessCsvImport implements ShouldQueue {
             try {
                 $validator = Validator::make($data, $this->rules);
                 $validator->validate();
-            }
-            catch (ValidationException $e) {
+            } catch (ValidationException $e) {
                 Log::error('CSV import vaildation failed for traits on trait:'.$data['name'].' with errors: '.json_encode($validator->errors()->all()));
                 foreach ($validator->errors()->all() as $error) {
                     if (str_contains($error, 'required')) {

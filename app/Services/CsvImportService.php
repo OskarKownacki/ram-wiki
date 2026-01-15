@@ -43,9 +43,9 @@ class CsvImportService implements CsvImportInterface {
                 );
             });
         $batch = Bus::batch($jobs)
-            ->name("CSV Import - {$config['type']}")  // Nazwa batcha dla identyfikacji
-            ->onQueue('csv_imports')                   // Kolejka
-            ->allowFailures()                          // Kontynuuj mimo błędów w pojedynczych jobach
+            ->name("CSV Import - {$config['type']}")
+            ->onQueue('csv_imports')
+            ->allowFailures()
             ->dispatch();
 
         return $batch->id;
@@ -87,8 +87,7 @@ class CsvImportService implements CsvImportInterface {
             if ($dbKey === 'voltage_v') {
                 if ($value === null || $value === '') {
                     $value = null;
-                }
-                else {
+                } else {
                     $value = str_replace(',', '.', $value);
                     $value = preg_replace('/[^0-9.]/', '', $value);
 
@@ -96,8 +95,7 @@ class CsvImportService implements CsvImportInterface {
                     if ($value !== '' && is_numeric($value)) {
                         $floatValue = (float) $value;
                         $value = ($floatValue >= 0.5 && $floatValue <= 5.0) ? $floatValue : null;
-                    }
-                    else {
+                    } else {
                         $value = null;
                     }
                 }
