@@ -17,18 +17,19 @@
 
 <body class="bg-primary min-h-screen flex flex-col">
     <header class="mx-[15%]">
-        <nav class="grid grid-cols-12 gap-16 p-4">
+        <nav class="grid grid-cols-12 gap2 p-4">
             <a href="/" class="col-span-3 text-2xl text-center flex items-center">Ram wiki Esus IT</a>
-            @if (Auth::check())
-                <a href="edit" class="col-span-2 col-start-6 text-center bg-secondary text-white rounded-md p-2 m-1"
-                    wire:navigate>Edit</a>
+            @if (Auth::check() && Auth::user()->is_admin)
+                <a href="edit"
+                    class="col-span-2 col-start-6 text-center bg-secondary text-white rounded-md p-2 m-1">Edit</a>
             @endif
-            @if (!Auth::check())
+            @guest
                 <div class="col-start-10 col-span-3 grid grid-cols-2 gap-2">
                     <livewire:auth.login-modal />
                     <livewire:auth.register-modal />
                 </div>
-            @else
+            @endguest
+            @auth
                 <div class="col-start-10 col-span-3 flex justify-end items-center gap-4">
                     <span class="text-white">Witaj, {{ Auth::user()->name }}</span>
                     <form method="POST" action="{{ route('logout') }}">
@@ -36,7 +37,7 @@
                         <button type="submit" class="bg-secondary text-white rounded-md p-2 m-1">Logout</button>
                     </form>
                 </div>
-            @endif
+            @endauth
         </nav>
     </header>
     <main class="grow">

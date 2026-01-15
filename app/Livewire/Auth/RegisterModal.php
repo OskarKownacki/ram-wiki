@@ -2,51 +2,51 @@
 
 namespace App\Livewire\Auth;
 
+use App\Actions\Fortify\CreateNewUser;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-class RegisterModal extends Component
-{
+class RegisterModal extends Component {
     public $isOpen = false;
 
+    #[Validate('required|string|max:255')]
     public $name = '';
 
+    #[Validate('required|string|email|max:255|unique:users')]
     public $email = '';
 
+    #[Validate('required|string|min:8|confirmed')]
     public $password = '';
 
+    #[Validate('required|string|same:password')]
     public $password_confirmation = '';
 
-    public function register()
-    {
-        $this->validate([
-            'email'    => 'required|email|string|max:255',
-            'password' => 'required|string|confirmed|min:8',
-            'name'     => 'required|string|max:255']);
-
-        $creator = app(\App\Actions\Fortify\CreateNewUser::class);
-        $user = $creator->create([
-            'name'                  => $this->name,
-            'email'                 => $this->email,
-            'password'              => $this->password,
-            'password_confirmation' => $this->password_confirmation,
-        ]);
-
-        \Auth::login($user);
-        $url = url()->previous();
-        return redirect($url);
-    }
-
-    public function mount()
-    {
-        if (Route::currentRouteName() === 'register')
-        {
+    public function mount() {
+        if (Route::currentRouteName() === 'register') {
             $this->isOpen = true;
         }
     }
 
-    public function render()
-    {
+    public function register(): void {
+        $validated = $this->validate();
+
+        (new CreateNewUser())->create($validated);
+
+        Auth::attempt([
+            'email'    => $this->email,
+            'password' => $this->password,
+        ]);
+
+        $this->redirect(config('fortify.home'), navigate: true);
+    }
+
+    public function render() {
         return view('livewire.auth.register-modal');
+    }
+
+    public function openModal() {
+        return $this->redirect(route('login'));
     }
 }
