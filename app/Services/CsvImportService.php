@@ -4,26 +4,27 @@ namespace App\Services;
 
 use App\Interfaces\CsvImportInterface;
 use App\Jobs\ProcessCsvImport;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
-class CsvImportService implements CsvImportInterface
-{
-    public function importCsvFile(string $filePath, int $tabId): void
-    {
+class CsvImportService implements CsvImportInterface {
+    public function importCsvFile(string $filePath, int $tabId): string {
         $config = match ($tabId) {
-            1 => ['fields' => config('csv-import.fields.ram'), 'type' => 'Ram'],
-            2 => ['fields' => config('csv-import.fields.server'), 'type' => 'Server'],
-            3 => ['fields' => config('csv-import.fields.trait'), 'type' => 'hardwareTrait'],
+            1       => ['fields' => config('csv-import.fields.ram'), 'type' => 'Ram'],
+            2       => ['fields' => config('csv-import.fields.server'), 'type' => 'Server'],
+            3       => ['fields' => config('csv-import.fields.trait'), 'type' => 'hardwareTrait'],
             default => throw new \Exception('Invalid Tab ID'),
         };
 
         $metadata = $this->prepareFieldsMetadata($config['fields']);
 
+        $jobs = [];
+
         SimpleExcelReader::create($filePath)
             ->getRows()
             ->chunk(200)
-            ->each(function ($chunk) use ($config, $metadata) {
+            ->each(function ($chunk) use ($config, $metadata, &$jobs) {
                 $fields = $config['fields'];
                 $modelName = $config['type'];
 
@@ -32,12 +33,25 @@ class CsvImportService implements CsvImportInterface
                 foreach ($chunk as $row) {
                     $batchData[] = $this->map($row, $fields);
                 }
-                ProcessCsvImport::dispatch($batchData, $metadata['rules'], $metadata['optionalFields'], $metadata['uniqueIndex'], $modelName)->onQueue('csv_imports');
+
+                $jobs[] = new ProcessCsvImport(
+                    $batchData,
+                    $metadata['rules'],
+                    $metadata['optionalFields'],
+                    $metadata['uniqueIndex'],
+                    $modelName
+                );
             });
+        $batch = Bus::batch($jobs)
+            ->name("CSV Import - {$config['type']}")  // Nazwa batcha dla identyfikacji
+            ->onQueue('csv_imports')                   // Kolejka
+            ->allowFailures()                          // Kontynuuj mimo błędów w pojedynczych jobach
+            ->dispatch();
+
+        return $batch->id;
     }
 
-    public function prepareFieldsMetadata(array $fields)
-    {
+    public function prepareFieldsMetadata(array $fields) {
         $rules = [];
         $optionalFields = [];
         $uniqueIndex = '';
@@ -52,14 +66,13 @@ class CsvImportService implements CsvImportInterface
         }
 
         return [
-            'rules' => $rules,
+            'rules'          => $rules,
             'optionalFields' => $optionalFields,
-            'uniqueIndex' => $uniqueIndex,
+            'uniqueIndex'    => $uniqueIndex,
         ];
     }
 
-    public function map(array $row, array $fields)
-    {
+    public function map(array $row, array $fields) {
         $data = [];
 
         foreach ($fields as $dbKey => $config) {
@@ -74,7 +87,8 @@ class CsvImportService implements CsvImportInterface
             if ($dbKey === 'voltage_v') {
                 if ($value === null || $value === '') {
                     $value = null;
-                } else {
+                }
+                else {
                     $value = str_replace(',', '.', $value);
                     $value = preg_replace('/[^0-9.]/', '', $value);
 
@@ -82,7 +96,8 @@ class CsvImportService implements CsvImportInterface
                     if ($value !== '' && is_numeric($value)) {
                         $floatValue = (float) $value;
                         $value = ($floatValue >= 0.5 && $floatValue <= 5.0) ? $floatValue : null;
-                    } else {
+                    }
+                    else {
                         $value = null;
                     }
                 }

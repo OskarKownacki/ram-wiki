@@ -4,18 +4,22 @@ namespace App\Livewire\Edit\Tabs;
 
 use App\Interfaces\CsvImportInterface;
 use App\Models\HardwareTrait as ModelsHardwareTrait;
+use Illuminate\Support\Facades\Bus;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Masmerise\Toaster\Toaster;
 
-class HardwareTrait extends Component
-{
+class HardwareTrait extends Component {
     use WithFileUploads;
 
     public $nameTrait;
 
     public $capacityTrait;
+
+    public $importInProgress = false;
+
+    public $batchId = null;
 
     public $bundleTrait;
 
@@ -52,17 +56,15 @@ class HardwareTrait extends Component
 
     private CsvImportInterface $csvImportInterface;
 
-    public function render()
-    {
+    public function render() {
         return view('livewire.edit.tabs.hardware-trait');
     }
 
-    public function saveTrait()
-    {
+    public function saveTrait() {
         $this->prepareRules(3);
         $this->validate($this->formRules);
 
-        $trait = new ModelsHardwareTrait;
+        $trait = new ModelsHardwareTrait();
         $trait->name = $this->nameTrait;
         $trait->capacity = $this->capacityTrait;
         $trait->bundle = $this->bundleTrait;
@@ -102,26 +104,25 @@ class HardwareTrait extends Component
         }
     }
 
-    public function prepareRules()
-    {
+    public function prepareRules() {
         $fields = config('csv-import.fields.trait');
         $map = [
-            'name' => 'nameTrait',
-            'capacity' => 'capacityTrait',
-            'bundle' => 'bundleTrait',
-            'type' => 'typeTrait',
-            'memory_type' => 'memoryTypeTrait',
-            'speed' => 'speedTrait',
-            'rank' => 'rankTrait',
-            'voltage_v' => 'voltageTrait',
-            'ecc_support' => 'eccSupportTrait',
+            'name'           => 'nameTrait',
+            'capacity'       => 'capacityTrait',
+            'bundle'         => 'bundleTrait',
+            'type'           => 'typeTrait',
+            'memory_type'    => 'memoryTypeTrait',
+            'speed'          => 'speedTrait',
+            'rank'           => 'rankTrait',
+            'voltage_v'      => 'voltageTrait',
+            'ecc_support'    => 'eccSupportTrait',
             'ecc_registered' => 'eccRegisteredTrait',
-            'frequency' => 'frequencyTrait',
-            'cycle_latency' => 'cycleLatencyTrait',
-            'bus' => 'portTrait',
-            'module_build' => 'moduleBuildTrait',
+            'frequency'      => 'frequencyTrait',
+            'cycle_latency'  => 'cycleLatencyTrait',
+            'bus'            => 'portTrait',
+            'module_build'   => 'moduleBuildTrait',
             'module_ammount' => 'moduleAmmountTrait',
-            'guarancy' => 'guarancyTrait',
+            'guarancy'       => 'guarancyTrait',
         ];
         foreach ($fields as $dbKey => $config) {
             if (isset($map[$dbKey])) {
@@ -131,18 +132,44 @@ class HardwareTrait extends Component
         }
     }
 
-    public function boot(CsvImportInterface $csvImportInterface)
-    {
-        $this->csvImportInterface = $csvImportInterface;
-    }
-
-    public function uploadCsv()
-    {
+    public function uploadCsv(CsvImportInterface $csvImportInterface) {
         $this->validate();
 
         $name = $this->csvFile->getClientOriginalName();
         $this->csvFile->storeAs(path: 'imports', name: $name);
         $path = storage_path('app/private/imports/'.$name);
-        $this->csvImportInterface->importCsvFile($path, 3);
+
+        $this->batchId = $csvImportInterface->importCsvFile($path, 3);
+        $this->importInProgress = true;
+        $this->csvFile = null;
+
+        Toaster::info('Rozpoczęto import pliku CSV.');
+    }
+
+    public function checkProgress() {
+        if (!$this->batchId) {
+            $this->importInProgress = false;
+            return;
+        }
+
+        $batch = Bus::findBatch($this->batchId);
+
+        if (!$batch) {
+            $this->importInProgress = false;
+            $this->batchId = null;
+            return;
+        }
+
+        if ($batch->finished()) {
+            $this->importInProgress = false;
+            $this->batchId = null;
+
+            if ($batch->failedJobs > 0) {
+                Toaster::warning("Import zakończony. {$batch->failedJobs} błędów.");
+            }
+            else {
+                Toaster::success('Import zakończony!');
+            }
+        }
     }
 }
