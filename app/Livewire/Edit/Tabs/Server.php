@@ -10,7 +10,8 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Masmerise\Toaster\Toaster;
 
-class Server extends Component {
+class Server extends Component
+{
     use WithFileUploads;
 
     public $hardwareTraitsServer = '';
@@ -34,11 +35,13 @@ class Server extends Component {
 
     private CsvImportInterface $csvImportInterface;
 
-    public function render() {
+    public function render()
+    {
         return view('livewire.edit.tabs.server');
     }
 
-    public function addTrait($value) {
+    public function addTrait($value)
+    {
         $value = trim($value);
 
         if (! empty($value) && ! in_array($value, $this->selectedTraits)) {
@@ -48,16 +51,18 @@ class Server extends Component {
         $this->hardwareTraitsServer = '';
     }
 
-    public function removeTrait($index) {
+    public function removeTrait($index)
+    {
         unset($this->selectedTraits[$index]);
         $this->selectedTraits = array_values($this->selectedTraits); // Reindeksacja tablicy
     }
 
-    public function saveServer() {
+    public function saveServer()
+    {
         $this->prepareRules(2);
         $this->validate($this->formRules);
 
-        $server = new ModelsServer();
+        $server = new ModelsServer;
         $server->manufacturer = $this->manufacturerServer;
         $server->model = $this->modelServer;
         if ($server->save()) {
@@ -78,16 +83,18 @@ class Server extends Component {
         }
     }
 
-    public function updatedHardwareTraitsServer($value) {
+    public function updatedHardwareTraitsServer($value)
+    {
         $this->autocompleteTraitsServer = HardwareTrait::where('name', 'like', $value.'%')->limit(5)->get();
         // dd($this->autocompleteTraitsServer);
     }
 
-    public function prepareRules() {
+    public function prepareRules()
+    {
         $fields = config('csv-import.fields.server');
         $map = [
-            'manufacturer'      => 'manufacturerServer',
-            'model'             => 'modelServer',
+            'manufacturer' => 'manufacturerServer',
+            'model' => 'modelServer',
             'hardware_trait_id' => 'hardwareTraitsServer',
 
         ];
@@ -99,7 +106,8 @@ class Server extends Component {
         }
     }
 
-    public function uploadCsv(CsvImportInterface $csvImportInterface) {
+    public function uploadCsv(CsvImportInterface $csvImportInterface)
+    {
         $this->validate();
 
         $name = $this->csvFile->getClientOriginalName();
@@ -113,17 +121,20 @@ class Server extends Component {
         Toaster::info('Rozpoczęto import pliku CSV.');
     }
 
-    public function checkProgress() {
-        if (!$this->batchId) {
+    public function checkProgress()
+    {
+        if (! $this->batchId) {
             $this->importInProgress = false;
+
             return;
         }
 
         $batch = Bus::findBatch($this->batchId);
 
-        if (!$batch) {
+        if (! $batch) {
             $this->importInProgress = false;
             $this->batchId = null;
+
             return;
         }
 
@@ -133,8 +144,7 @@ class Server extends Component {
 
             if ($batch->failedJobs > 0) {
                 Toaster::warning("Import zakończony. {$batch->failedJobs} błędów.");
-            }
-            else {
+            } else {
                 Toaster::success('Import zakończony!');
             }
         }

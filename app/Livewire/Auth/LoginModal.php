@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-class LoginModal extends Component {
+class LoginModal extends Component
+{
     public $isOpen = false;
 
     #[Validate('required|email')]
@@ -16,29 +17,32 @@ class LoginModal extends Component {
     #[Validate('required')]
     public $password = '';
 
-    public function mount() {
+    public function mount()
+    {
         if (Route::currentRouteName() === 'login') {
             $this->isOpen = true;
         }
     }
 
-    public function login(): void {
+    public function login(): void
+    {
         $validated = $this->validate();
 
         if (Auth::attempt($validated)) {
             request()->session()->regenerate();
             $this->redirect(config('fortify.home'), navigate: true);
-        }
-        else {
+        } else {
             $this->addError('email', 'Dane logowania są nieprawidłowe.');
         }
     }
 
-    public function render() {
+    public function render()
+    {
         return view('livewire.auth.login-modal');
     }
 
-    public function openModal() {
+    public function openModal()
+    {
         return $this->redirect(route('login'));
     }
 }

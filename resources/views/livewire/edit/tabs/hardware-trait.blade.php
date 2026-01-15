@@ -1,7 +1,7 @@
 <div>
     <form wire:submit="uploadCsv" class="grid grid-cols-12 gap-4 col-span-12 p-4">
         <label for="csv_file"
-            class="col-span-2 col-start-1 bg-green-700 hover:brightness-110 transition-opacity rounded-md p-2 flex items-center justify-between cursor-pointer">
+            class="col-span-2 col-start-1 bg-green-700 hover:brightness-110 transition rounded-md p-2 flex items-center justify-between cursor-pointer">
             CSV Import
             @svg('heroicon-o-table-cells', ['class' => 'w-6 h-6 text-white'])
         </label>

@@ -26,7 +26,7 @@ return (new PhpCsFixer\Config())
             'position_after_anonymous_constructs'         => 'same',
         ],
         'control_structure_continuation_position' => [
-            'position' => 'next_line',
+            'position' => 'same_line',
         ],
     ])
     // ->setIndent("\t")

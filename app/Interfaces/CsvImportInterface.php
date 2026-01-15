@@ -2,6 +2,7 @@
 
 namespace App\Interfaces;
 
-interface CsvImportInterface {
+interface CsvImportInterface
+{
     public function importCsvFile(string $filePath, int $tabId): string;
 }
