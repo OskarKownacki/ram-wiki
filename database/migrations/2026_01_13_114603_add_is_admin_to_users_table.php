@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('hardware_traits', function (Blueprint $table) {
-            $table->dropColumn(['manufacturer', 'description']);
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('is_admin')->default(false)->after('password');
         });
     }
 
@@ -21,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('hardware_traits', function (Blueprint $table) {
-            $table->string('manufacturer');
-            $table->string('description')->nullable();
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('is_admin');
         });
     }
 };

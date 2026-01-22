@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('hardware_traits', function (Blueprint $table) {
-            $table->dropColumn(['manufacturer', 'description']);
+        Schema::table('hardware_trait_server', function (Blueprint $table) {
+            $table->dropTimestamps();
         });
     }
 
@@ -21,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('hardware_traits', function (Blueprint $table) {
-            $table->string('manufacturer');
-            $table->string('description')->nullable();
+        Schema::table('hardware_trait_server', function (Blueprint $table) {
+            $table->timestamps();
         });
     }
 };

@@ -5,6 +5,7 @@
                 'text-3xl',
                 'col-span-1',
                 'rounded-md',
+                'cursor-pointer',
                 'hover:bg-zinc-500' => $selectedTabId !== 1,
                 'font-bold border-b-2 border-accent' => $selectedTabId === 1,
             ]) wire:click="setTab(1)">RAM</button>
@@ -12,6 +13,7 @@
                 'text-3xl',
                 'col-span-1',
                 'rounded-md',
+                'cursor-pointer',
                 'hover:bg-zinc-500' => $selectedTabId !== 2,
                 'font-bold border-b-2 border-accent' => $selectedTabId === 2,
             ]) wire:click="setTab(2)">Server</button>
@@ -19,6 +21,7 @@
                 'text-3xl',
                 'col-span-1',
                 'rounded-md',
+                'cursor-pointer',
                 'hover:bg-zinc-500' => $selectedTabId !== 3,
                 'font-bold border-b-2 border-accent' => $selectedTabId === 3,
             ]) wire:click="setTab(3)">Trait</button>

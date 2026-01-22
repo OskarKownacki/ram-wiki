@@ -4,6 +4,7 @@ namespace App\Livewire\Edit\Tabs;
 
 use App\Interfaces\CsvImportInterface;
 use App\Models\HardwareTrait;
+use Illuminate\Support\Facades\Bus;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -21,6 +22,10 @@ class Ram extends Component
 
     public $producerCode;
 
+    public $batchId = null;
+
+    public $importInProgress = false;
+
     public $description;
 
     public $formRules;
@@ -35,20 +40,19 @@ class Ram extends Component
 
     public function updatedHardwareTraitRam($value)
     {
-        $this->autocompleteTraitRam = HardwareTrait::where('name', 'like', $value . '%')->limit(5)->get();
+        $this->autocompleteTraitRam = HardwareTrait::where('name', 'like', $value.'%')->limit(5)->get();
     }
 
     public function saveRam()
     {
         $this->prepareRules(1);
         $this->validate($this->formRules);
-        $ram = new \App\Models\Ram();
+        $ram = new \App\Models\Ram;
         $ram->manufacturer = $this->manufacturer;
         $ram->description = $this->description;
         $ram->product_code = $this->producerCode;
-        $ram->hardware_trait_id = HardwareTrait::where('name', '=', $this->hardwareTraitRam)->first()-> id ?? null;
-        if ($ram->save())
-        {
+        $ram->hardware_trait_id = HardwareTrait::where('name', '=', $this->hardwareTraitRam)->first()->id ?? null;
+        if ($ram->save()) {
             $this->manufacturer = null;
             $this->description = null;
             $this->producerCode = null;
@@ -62,18 +66,16 @@ class Ram extends Component
         $fields = config('csv-import.fields.ram');
 
         $map = [
-            'manufacturer'      => 'manufacturer',
-            'description'       => 'description',
-            'product_code'      => 'producerCode',
+            'manufacturer' => 'manufacturer',
+            'description' => 'description',
+            'product_code' => 'producerCode',
             'hardware_trait_id' => 'hardwareTraitRam',
         ];
 
-        foreach ($fields as $dbKey => $config)
-        {
-            if (isset($map[$dbKey]))
-            {
+        foreach ($fields as $dbKey => $config) {
+            if (isset($map[$dbKey])) {
                 $wireKey = $map[$dbKey];
-                $this->formRules[$wireKey] = $config["rules"];
+                $this->formRules[$wireKey] = $config['rules'];
             }
         }
     }
@@ -84,7 +86,40 @@ class Ram extends Component
 
         $name = $this->csvFile->getClientOriginalName();
         $this->csvFile->storeAs(path: 'imports', name: $name);
-        $path = storage_path('app/private/imports/' . $name);
-        $csvImportInterface->importCsvFile($path, 1);
+        $path = storage_path('app/private/imports/'.$name);
+        $this->batchId = $csvImportInterface->importCsvFile($path, 1);
+        $this->importInProgress = true;
+        $this->csvFile = null;
+
+        Toaster::info('Rozpoczęto import pliku CSV.');
+    }
+
+    public function checkProgress()
+    {
+        if (! $this->batchId) {
+            $this->importInProgress = false;
+
+            return;
+        }
+
+        $batch = Bus::findBatch($this->batchId);
+
+        if (! $batch) {
+            $this->importInProgress = false;
+            $this->batchId = null;
+
+            return;
+        }
+
+        if ($batch->finished()) {
+            $this->importInProgress = false;
+            $this->batchId = null;
+
+            if ($batch->failedJobs > 0) {
+                Toaster::warning("Import zakończony. {$batch->failedJobs} błędów.");
+            } else {
+                Toaster::success('Import zakończony!');
+            }
+        }
     }
 }

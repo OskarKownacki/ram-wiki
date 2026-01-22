@@ -4,22 +4,22 @@ return [
     'fields' => [
         'ram' => [
             'product_code' => [
-                'csv'   => 'Symbol',
+                'csv' => 'Symbol',
                 'rules' => 'required|string',
-                'info'  => ['uniqueIndex' => true],
+                'info' => ['uniqueIndex' => true],
             ],
             'description' => [
-                'csv'   => 'Opis',
+                'csv' => 'Opis',
                 'rules' => 'required|string',
             ],
             'manufacturer' => [
-                'csv'   => 'Producent',
+                'csv' => 'Producent',
                 'rules' => 'string',
             ],
             'hardware_trait_id' => [
-                'csv'   => 'Cecha',
+                'csv' => 'Cecha',
                 'rules' => 'nullable',
-                'info'  => ['relationship' => 'hardware_traits', 'foreignKey' => 'name'],
+                'info' => ['relationship' => 'hardware_traits', 'foreignKey' => 'name'],
             ],
             // 'group' => [
             //     'csv'   => 'Grupa',
@@ -28,86 +28,86 @@ return [
         ],
         'trait' => [
             'name' => [
-                'csv'   => 'Nazwa',
+                'csv' => 'Nazwa',
                 'rules' => 'required|string',
-                'info'  => ['uniqueIndex' => true],
+                'info' => ['uniqueIndex' => true],
             ],
             'capacity' => [
-                'csv'   => 'Pojemność całkowita',
-                'rules' => 'required|string',
+                'csv' => 'Pojemność całkowita',
+                'rules' => 'string',
             ],
             'bundle' => [
-                'csv'   => 'Zestaw',
-                'rules' => 'required|string',
+                'csv' => 'Zestaw',
+                'rules' => 'string',
             ],
             'type' => [
-                'csv'   => 'Typ',
-                'rules' => 'required|string',
+                'csv' => 'Typ',
+                'rules' => 'string',
             ],
             'rank' => [
-                'csv'   => 'Rank',
-                'rules' => 'required|string',
+                'csv' => 'Rank',
+                'rules' => 'string',
             ],
             'memory_type' => [
-                'csv'   => 'Rodzaj pamięci',
-                'rules' => 'required|string',
+                'csv' => 'Rodzaj pamięci',
+                'rules' => 'string',
             ],
             'ecc_support' => [
-                'csv'   => 'Obsługa ECC',
-                'rules' => 'required|boolean',
+                'csv' => 'Obsługa ECC',
+                'rules' => 'integer',
             ],
             'ecc_registered' => [
-                'csv'   => 'Rejestrowanie (ECC Registered)',
-                'rules' => 'boolean',
+                'csv' => 'Rejestrowanie (ECC Registered)',
+                'rules' => 'integer',
             ],
             'speed' => [
-                'csv'   => 'Szybkość modułu',
-                'rules' => 'required|string',
+                'csv' => 'Szybkość modułu',
+                'rules' => 'string',
             ],
             'frequency' => [
-                'csv'   => 'Częstotliwość',
-                'rules' => 'required|string',
+                'csv' => 'Częstotliwość',
+                'rules' => 'string',
             ],
             'cycle_latency' => [
-                'csv'   => 'Opóźnienie (Cycle Latency)',
+                'csv' => 'Opóźnienie (Cycle Latency)',
                 'rules' => 'string',
             ],
             'voltage_v' => [
-                'csv'   => 'Napięcie (V)',
+                'csv' => 'Napięcie (V)',
                 'rules' => 'numeric|nullable',
             ],
             'bus' => [
-                'csv'   => 'Złącze',
+                'csv' => 'Złącze',
                 'rules' => 'string',
             ],
             'module_build' => [
-                'csv'   => 'Budowa modułu',
+                'csv' => 'Budowa modułu',
                 'rules' => 'string',
             ],
             'module_ammount' => [
-                'csv'   => 'Liczba modułów',
+                'csv' => 'Liczba modułów',
                 'rules' => 'string',
             ],
             'guarancy' => [
-                'csv'   => 'Gwarancja',
+                'csv' => 'Gwarancja',
                 'rules' => 'string',
             ],
         ],
         'server' => [
             'manufacturer' => [
-                'csv'   => 'PRODUCENT',
+                'csv' => 'PRODUCENT',
                 'rules' => 'string|nullable',
             ],
             'model' => [
-                'csv'   => 'MODEL',
-                'rules' => 'required|string',
-                'info'  => ['uniqueIndex' => true],
+                'csv' => 'MODEL',
+                'rules' => 'string',
+                'info' => ['uniqueIndex' => true],
             ],
             'hardware_trait_id' => [
-                'csv'   => 'CECHA',
+                'csv' => 'CECHA',
                 'rules' => 'nullable',
-                'info'  => ['MtM' => 'hardware_trait_server',
-                    'delimeter'   => ','],
+                'info' => ['MtM' => 'hardware_trait_server',
+                    'delimeter' => ',', ],
             ],
         ],
     ],

@@ -40,7 +40,7 @@ class HardwareTrait extends Model
     {
         return Attribute::make(
             get: fn ($value) => (bool) $value,
-            set: fn ($value) => (bool) $value,
+            set: fn ($value) => (int) $value,
         );
     }
 

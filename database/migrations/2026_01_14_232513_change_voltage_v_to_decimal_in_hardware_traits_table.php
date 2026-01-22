@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('hardware_traits', function (Blueprint $table) {
-            $table->dropColumn(['manufacturer', 'description']);
+            $table->decimal('voltage_v', 4, 2)->nullable()->change();
         });
     }
 
@@ -22,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('hardware_traits', function (Blueprint $table) {
-            $table->string('manufacturer');
-            $table->string('description')->nullable();
+            $table->integer('voltage_v')->nullable()->change();
         });
     }
 };

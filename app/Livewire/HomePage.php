@@ -15,7 +15,7 @@ class HomePage extends Component
 
     public function updatedSearchValue($value)
     {
-        $this->autocompleteValues = Ram::where('product_code', 'like', $value . '%')->take(5)->get();
+        $this->autocompleteValues = Ram::where('product_code', 'like', $value.'%')->take(5)->get();
     }
 
     public function render()

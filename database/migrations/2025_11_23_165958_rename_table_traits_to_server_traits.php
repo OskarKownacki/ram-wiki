@@ -10,8 +10,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::rename('server_traits', 'server_trait'); 
-       Schema::rename('traits', 'server_traits');
+        Schema::rename('server_traits', 'server_trait');
+        Schema::rename('traits', 'server_traits');
     }
 
     /**
