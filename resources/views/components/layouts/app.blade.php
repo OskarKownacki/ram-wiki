@@ -23,7 +23,7 @@
             <a href="/" class="col-span-3 text-2xl text-center flex items-center">Ram wiki Esus IT</a>
             @if (Auth::check() && Auth::user()->is_admin)
                 <a href="edit"
-                    class="col-span-2 col-start-6 text-center bg-secondary text-white rounded-md p-2 m-1 cursor-pointer hover:opacity-90 transition-opacity">Edit</a>
+                    class="col-span-2 col-start-6 text-center bg-secondary text-black rounded-md p-2 m-1 cursor-pointer hover:opacity-90 transition-opacity">Edit</a>
             @endif
             @guest
                 <div class="col-start-10 col-span-3 grid grid-cols-2 gap-2">
@@ -37,7 +37,7 @@
                     <form method="POST" class="w-full" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
-                            class="bg-secondary w-full text-white rounded-md p-2 m-1 cursor-pointer hover:opacity-90 transition-opacity">Logout</button>
+                            class="bg-secondary w-full text-black rounded-md p-2 m-1 cursor-pointer hover:opacity-90 transition-opacity">Logout</button>
                     </form>
                 </div>
             @endauth

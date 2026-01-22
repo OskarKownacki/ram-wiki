@@ -1,6 +1,6 @@
 <div>
     <button
-        class="bg-accent text-white text-center rounded-md p-2 m-1 w-full cursor-pointer hover:opacity-90 transition-opacity"
+        class="bg-accent text-black text-center rounded-md p-2 m-1 w-full cursor-pointer hover:opacity-90 transition-opacity"
         wire:click="openModal">Register</button>
 
 
@@ -50,7 +50,7 @@
 
                     <div class="flex justify-end gap-2">
                         <button type="button" wire:click="$set('isOpen', false)"
-                            class="px-4 py-2 text-white hover:opacity-90 cursor-pointer transition-opacity">Anuluj</button>
+                            class="px-4 py-2 text-black hover:opacity-90 cursor-pointer transition-opacity">Anuluj</button>
                         <button type="submit"
                             class="bg-accent hover:opacity-90 cursor-pointer transition-opacity text-white px-4 py-2 rounded">Zarejestruj</button>
                     </div>
