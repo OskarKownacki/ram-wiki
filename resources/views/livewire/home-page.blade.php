@@ -3,7 +3,7 @@
         <form class="col-span-10 col-start-2 flex flex-row" wire:submit="onSearchSubmit">
             <input type="text" placeholder="Search RAMs..." list="autocompleteList"
                 wire:model.live.debounce.250ms="searchValue"
-                class="w-full p-3 h-full rounded-full focus:outline-none rounded-r-none text-white bg-secondary placeholder:text-white" />
+                class="w-full p-3 h-full rounded-full focus:outline-none rounded-r-none text-black bg-secondary placeholder:text-blakc" />
             <datalist id="autocompleteList">
                 @if (isset($autocompleteValues))
                     @foreach ($autocompleteValues as $autocompleteValue)
@@ -11,8 +11,9 @@
                     @endforeach
                 @endif
             </datalist>
-            <button type="submit" class="bg-secondary text-white rounded-full p-3 h-full rounded-l-none">
-                @svg('heroicon-o-ellipsis-vertical', ['class' => 'w-6 h-6', 'style' => 'color: #ffffff'])
+            <button type="submit" class="bg-secondary text-black rounded-full p-3 h-full rounded-l-none"
+                aria-label="Search">
+                @svg('heroicon-o-ellipsis-vertical', ['class' => 'w-6 h-6', 'style' => 'color: black'])
             </button>
         </form>
         <div class="col-span-10 col-start-2">

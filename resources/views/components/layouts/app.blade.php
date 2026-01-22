@@ -7,12 +7,14 @@
 
     <title>{{ $title ?? 'Ram wiki' }}</title>
     @fluxAppearance
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    <meta name="description"
+        content="Ram wiki Esus IT - A comprehensive database of RAM modules. Find detailed specifications, compatibility information, and more about various RAM modules.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" media="print" onload="this.media='all'">
 </head>
 
 <body class="bg-primary min-h-screen flex flex-col">
@@ -20,10 +22,10 @@
         <nav class="grid grid-cols-12 gap-16 p-4">
             <a href="/" class="col-span-3 text-2xl text-center flex items-center">Ram wiki Esus IT</a>
             <a href="edit"
-                class="col-span-2 col-start-6 text-center bg-secondary text-white rounded-md p-2 m-1">Edit</a>
+                class="col-span-2 col-start-6 text-center bg-secondary text-black rounded-md p-2 m-1">Edit</a>
             <div class="col-start-10 col-span-3 grid grid-cols-2">
-                <a class="bg-secondary text-white text-center rounded-md p-2 m-1" href="/login">Login</a>
-                <a class="bg-accent text-white text-center rounded-md p-2 m-1" href="/register">Register</a>
+                <a class="bg-secondary text-black text-center rounded-md p-2 m-1" href="/login">Login</a>
+                <a class="bg-accent text-black text-center rounded-md p-2 m-1" href="/register">Register</a>
             </div>
         </nav>
     </header>
